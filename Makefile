@@ -1,4 +1,6 @@
-# Generic Makefile for estt
+# $Id$
+#
+# Generic Makefile for areastat (estt by Dmitry Rusov)
 
 ifeq ($(DEBIAN), 1)
 # Every Debian-Source-Paket has one included.
@@ -29,64 +31,64 @@ CDEFS=-D$(OSTYPE) -DUNAME=\"$(UNAME)\" $(ADDCDEFS)
 
 SRC_DIR=src/
 
-OBJS= estt.o
+OBJS= areastat.o
 
-estt: $(OBJS)
-		$(CC) $(OBJS) $(LFLAGS) $(LIBS) -o estt
+areastat: $(OBJS)
+		$(CC) $(OBJS) $(LFLAGS) $(LIBS) -o areastat
 
 
 %.o: $(SRC_DIR)%.c
 		$(CC) $(CFLAGS) $(CDEFS) -c $<
      
 info:
-	makeinfo --no-split estt.texi
+	makeinfo --no-split areastat.texi
 
 html:
-	export LC_ALL=C; makeinfo --html --no-split estt.texi
+	export LC_ALL=C; makeinfo --html --no-split areastat.texi
 
 docs: info html
 
 FORCE:
 
 man: FORCE
-	gzip -9c man/estt.1 > estt.1.gz
+	gzip -9c man/areastat.1 > areastat.1.gz
 
 clean:
 		rm -f *.o *~ src/*.o src/*~
 
 distclean: clean
-	-$(RM) $(RMOPT) estt
-	-$(RM) $(RMOPT) estt.info
-	-$(RM) $(RMOPT) estt.html
-	-$(RM) $(RMOPT) estt.1.gz
+	-$(RM) $(RMOPT) areastat
+	-$(RM) $(RMOPT) areastat.info
+	-$(RM) $(RMOPT) areastat.html
+	-$(RM) $(RMOPT) areastat.1.gz
 
-all: estt docs man
+all: areastat docs man
 
 install: all
-	$(INSTALL) $(IBOPT) estt $(BINDIR)
+	$(INSTALL) $(IBOPT) areastat $(BINDIR)
 ifdef INFODIR
 	-$(MKDIR) $(MKDIROPT) $(INFODIR)
-	$(INSTALL) $(IMOPT) estt.info $(INFODIR)
-	-install-info --info-dir=$(INFODIR)  $(INFODIR)$(DIRSEP)estt.info
+	$(INSTALL) $(IMOPT) areastat.info $(INFODIR)
+	-install-info --info-dir=$(INFODIR)  $(INFODIR)$(DIRSEP)areastat.info
 endif
 ifdef HTMLDIR
 	-$(MKDIR) $(MKDIROPT) $(HTMLDIR)
-	$(INSTALL) $(IMOPT) estt*html $(HTMLDIR)
+	$(INSTALL) $(IMOPT) areastat*html $(HTMLDIR)
 endif
 ifdef MANDIR
 	-$(MKDIR) $(MKDIROPT) $(MANDIR)$(DIRSEP)man1
-	$(INSTALL) $(IMOPT) estt.1.gz $(MANDIR)$(DIRSEP)man1
+	$(INSTALL) $(IMOPT) areastat.1.gz $(MANDIR)$(DIRSEP)man1
 endif
 
 uninstall:
-	$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)estt$(EXE)
+	$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)areastat$(EXE)
 ifdef INFODIR
-	$(RM) $(RMOPT) $(INFODIR)$(DIRSEP)estt.info
+	$(RM) $(RMOPT) $(INFODIR)$(DIRSEP)areastat.info
 endif
 ifdef HTMLDIR
-	$(RM) $(RMOPT) $(HTMLDIR)$(DIRSEP)estt.html
+	$(RM) $(RMOPT) $(HTMLDIR)$(DIRSEP)areastat.html
 endif
 ifdef MANDIR
-	$(RM) $(RMOPT) $(MANDIR)$(DIRSEP)man1$(DIRSEP)estt.1.gz
+	$(RM) $(RMOPT) $(MANDIR)$(DIRSEP)man1$(DIRSEP)areastat.1.gz
 endif
 
