@@ -25,7 +25,7 @@ VER	= $(VERH).$(VERPATCH)
 OBJS	= areastat$(_OBJ)
 
 # Header files
-HEADERS	= cvsdate.h areastat.h
+HEADERS	= cvsdate.h areastat.h version.h
 
 # Sources directory
 _SRC_DIR= ../src/
