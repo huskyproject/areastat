@@ -31,14 +31,14 @@ _EXE	  = .exe
 
 ## programs ##
 CFLAGS	= -nologo -MD -Zp1
-CINCL	= -I$(H_DIR) -I..\..
+CINCL   = -I$(H_DIR) -I..\..\smapi -I..\..\huskylib
 CDEFS	= -D__NT__ -DNT -DWINNT -DWIN32 -D_CONSOLE -D_MAKE_DLL
 COPT	= -Ob2
 
 EXEFLAGS= /link /opt:nowin98
 EXENAMEFLAG = -Fe
 
-LIBS	= ..\..\smapi\smapimvc.lib \
+LIBS	= ..\..\smapi\make\smapimvc.lib ..\..\huskylib\make\huskymvc.lib \
 	  USER32.LIB msvcrt.lib Kernel32.lib
 
 default: all

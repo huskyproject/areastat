@@ -31,13 +31,13 @@ _EXE	  = .exe
 
 ## programs ##
 CFLAGS	= -nologo -Zp1
-CINCL	= -I$(H_DIR) -I..\..
+CINCL	= -I$(H_DIR) -I..\..\smapi -I..\..\huskylib
 CDEFS	= -D__NT__ -DNT -DWINNT -DWIN32 -D_CONSOLE
 COPT	= -Ob2
 
 EXENAMEFLAG = -Fe
 
-LIBS	= ..\..\smapi\smapimvc.lib
+LIBS	= ..\..\smapi\make\smapimvc.lib ..\..\huskylib\make\huskymvc.lib
 
 default: all
 
