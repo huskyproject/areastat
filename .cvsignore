@@ -1,0 +1,11 @@
+*.exp
+*.dll
+*.lib
+*.obj
+*.dsp
+*.plg
+*.o
+*.orig
+*.a
+*.so
+*.so.*
