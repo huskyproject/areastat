@@ -27,7 +27,7 @@ endif
 
 CDEFS=-D$(OSTYPE) -DUNAME=\"$(UNAME)\" $(ADDCDEFS)
 
-SRC_DIR=.
+SRC_DIR=src/
 
 OBJS= estt.o
 
