@@ -9,7 +9,7 @@ include makefile.inc
 
 # Version
 VERMAJOR= 1
-VERMINOR= 9
+VERMINOR= 4
 VERPATCH= 0
 VERH	= $(VERMAJOR).$(VERMINOR)
 VER	= $(VERH).$(VERPATCH)
@@ -31,17 +31,15 @@ _EXE	  = .exe
 
 ## programs ##
 CFLAGS	= -nologo -Zp1
-CINCL	= -I$(H_DIR) -I..\..\smapi -I..\..\huskylib
+CINCL	= -I$(H_DIR) -I..\..
 CDEFS	= -D__NT__ -DNT -DWINNT -DWIN32 -D_CONSOLE
 COPT	= -Ob2
 
 EXENAMEFLAG = -Fe
 
-LIBS	= ..\..\smapi\make\smapimvc.lib ..\..\huskylib\make\huskymvc.lib
+LIBS	= ..\..\smapi\smapimvc.lib
 
-default:
-	@echo Run 'make programs' to build static version of programs ($(PROGRAMS))
-	@echo Run 'make all' to build all above
+default: all
 
 all: programs
 programs: $(PROGRAMS)

@@ -9,7 +9,7 @@ include makefile.inc
 
 # Version
 VERMAJOR= 1
-VERMINOR= 9
+VERMINOR= 4
 VERPATCH= 0
 VERH	= $(VERMAJOR).$(VERMINOR)
 VER	= $(VERH).$(VERPATCH)
@@ -31,19 +31,17 @@ _EXE	  = .exe
 
 ## programs ##
 CFLAGS	= -nologo -MD -Zp1
-CINCL	= -I$(H_DIR) -I..\..\smapi -I..\..\huskylib
-CDEFS	= -D__NT__ -DNT -DWINNT -DWIN32 -D_CONSOLE
+CINCL	= -I$(H_DIR) -I..\..
+CDEFS	= -D__NT__ -DNT -DWINNT -DWIN32 -D_CONSOLE -D_MAKE_DLL
 COPT	= -Ob2
 
 EXEFLAGS= /link /opt:nowin98
 EXENAMEFLAG = -Fe
 
-LIBS	= ..\..\smapi\make\smapimvc.lib ..\..\huskylib\make\huskymvc.lib \
+LIBS	= ..\..\smapi\smapimvc.lib \
 	  USER32.LIB msvcrt.lib Kernel32.lib
 
-default:
-	@echo Run 'make programs' to build dinamic version of programs ($(PROGRAMS))
-	@echo Run 'make all' to build all above
+default: all
 
 all: programs
 programs: $(PROGRAMS)
