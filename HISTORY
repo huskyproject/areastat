@@ -3,6 +3,12 @@
 + - added new feature
 - - removed
 
+--- Version 1.9.0-current
++ Rename module 'estt' -> 'areastat'
++ Insert into The Husky project
++ Fix compilation with news library structure
++ Other small fixes
+
 --- Version 1.06
 
 + MSG and JAM message base support
