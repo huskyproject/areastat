@@ -1,3 +1,15 @@
+2004-01-31 Saturday 20:38  mche
+
+	* make/areastat.vcproj (1.2): fix building
+
+2004-01-31 Saturday 13:39  mche
+
+	* make/areastat.vcproj (1.1): MSVC7 proj file
+
+2004-01-31 Saturday 13:37  mche
+
+	* src/areastat.c (1.5): fix compilation
+
 2004-01-21 Wednesday 02:05  andr_lukyanov
 
 	* HISTORY (1.3), README (1.3), VERSION (1.2), areastat.cfg (1.2),
