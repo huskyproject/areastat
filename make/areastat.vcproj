@@ -113,12 +113,7 @@
 				Name="VCMIDLTool"
 				TypeLibraryName=".\..\nd_r\bin/areastat.tlb"/>
 			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="echo Building documentation
-set PATH=%PATH%;F:\compilation\cyg\bin
-bash -c &apos;makeinfo --html --no-split --force ../areastat.texi&apos;
-move /Y  areastat.html $(OutDir)
-"/>
+				Name="VCPostBuildEventTool"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
