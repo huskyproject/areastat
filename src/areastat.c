@@ -17,9 +17,9 @@
 #include <string.h>
 #include <time.h>
 
-#include <smapi/compiler.h>
-#include <smapi/typedefs.h>
-#include <smapi/progprot.h>
+#include <huskylib/huskylib.h>
+//#include <smapi/typedefs.h>
+//#include <smapi/progprot.h>
 #include <smapi/msgapi.h>
 
 #include "areastat.h"
@@ -164,6 +164,9 @@ static char *mnames[] = {
 static char *wdnames[] = {"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
 
 
+
+#ifndef _MAKE_DLL
+
 void *smalloc(size_t size)
 {
     void *ptr = malloc(size);
@@ -185,6 +188,8 @@ void *srealloc(void *ptr, size_t size)
     }
     return newptr;
 }
+
+#endif
 
 int name_comparer(const void *str1, const void *str2)
 {
