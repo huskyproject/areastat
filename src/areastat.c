@@ -137,7 +137,7 @@ unsigned long messages = 0;
 float msgs_in_day = 0;
 FILE * current_std;
 FILE *out_pkt;
-char version_str[80];
+char *versionStr;
 unsigned int isecs;
 
 static int aDaysFromJan1st[13] = {
@@ -157,13 +157,6 @@ static int aDaysFromJan1st[13] = {
 };
 
 static int days_in_months[12] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
-
-static char *mnames[] = {
-    "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
-
-static char *wdnames[] = {"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
-
-
 
 #ifndef _MAKE_DLL
 
@@ -696,8 +689,8 @@ int print_summary_statistics(unsigned long i)
 
     fprintf(current_std,"  Area: %s\n",main_config->areas[i].name);
     fprintf(current_std,"  Period: %s %02d %s %d - %s %02d %s %d\n",
-            wdnames[fd.tm_wday],fd.tm_mday,mnames[fd.tm_mon-1],fd.tm_year+1900,
-            wdnames[ld.tm_wday],ld.tm_mday,mnames[ld.tm_mon-1],ld.tm_year+1900);
+            weekday_ab[fd.tm_wday],fd.tm_mday,months_ab[fd.tm_mon-1],fd.tm_year+1900,
+            weekday_ab[ld.tm_wday],ld.tm_mday,months_ab[ld.tm_mon-1],ld.tm_year+1900);
 
     fprintf(current_std,"  Messages: %ld\n",messages);
     fprintf(current_std,"  Total users: %ld\n",gd_count);
@@ -1066,7 +1059,7 @@ int print_statistics_by_wdays()
         k = ((float)(counts[i]/(float)(maxcount))*60);
         for (j = 0;j < k ;j++) strcat(diag,"Ü");
 
-        fprintf(current_std," %s %6ld³%-60s\n",wdnames[i],counts[i],diag);
+        fprintf(current_std," %s %6ld³%-60s\n",weekday_ab[i],counts[i],diag);
 
     }
 
@@ -1702,7 +1695,7 @@ int write_msg_hdr(int n)
     }
 
     sprintf(mh.DateTime,"%02d %s %s  %02d:%02d:%02d",t.tm_mday,
-            mnames[t.tm_mon],yr,t.tm_hour,t.tm_min,isecs);
+            months_ab[t.tm_mon],yr,t.tm_hour,t.tm_min,isecs);
 
     isecs++;
     if (isecs > 59) isecs = 0; /* pseudo secs (anti dupes in squish) */
@@ -1750,7 +1743,7 @@ int write_msg_hdr(int n)
     fwrite(s,strlen(s),1,out_pkt);
     if (ferror(out_pkt)) print_write_err();
 
-    sprintf(s,"\r\x01PID: %s\r",version_str);
+    sprintf(s,"\r\x01PID: %s\r",versionStr);
 
     fwrite(s,strlen(s),1,out_pkt);
     if (ferror(out_pkt)) print_write_err();
@@ -1778,7 +1771,7 @@ int end_msg(unsigned char e)
         if (ferror(out_pkt)) print_write_err();
     }
 
-    sprintf(s,"\r\r--- %s",version_str);
+    sprintf(s,"\r\r--- %s",versionStr);
 
     fwrite (s, strlen(s), 1, out_pkt);
     if (ferror(out_pkt)) print_write_err();
@@ -1823,126 +1816,13 @@ int main(int argc,char *argv[])
     int j;
     char ibuff[256];
 
-    char version[10], versionNum[] = "1.4.0";
-
     global_msgid = time(NULL);
     global_msgid %= 0xffffffff;
 
-#if defined(__linux__)              /*  gcc on Linux                    */
-   strcpy(version, "/lnx");
+    versionStr = GenVersionStr( "areastat", VER_MAJOR, VER_MINOR, VER_PATCH,
+                               VER_BRANCH, cvs_date );
 
-#elif defined(__FreeBSD__)            /*  gcc on FreeBSD                  */
-   strcpy(version, "/fbsd");
-
-#elif defined(__NetBSD__)             /*  gcc on NetBSD                   */
-   strcpy(version, "/nbsd");
-
-#elif defined(__OpenBSD__)            /*  gcc on OpenBSD                  */
-  strcpy(version, "/obsd");
-
-#elif defined(__BSD__)                /*  gcc on other BSD clone          */
-   strcpy(version, "/bsd");
-
-#elif defined(__sun__)                /*  SunOS (Solaris)                 */
-#  if defined(__GNUC__)
-   strcpy(version, "/sun-gcc");
-#  else
-   strcpy(version, "/sun");
-#  endif
-
-#elif defined(__APPLE__) && defined(__MACH__)
-   strcpy(version, "/mac");
-
-#elif defined(_AIX)
-   strcpy(version, "/aix");
-
-#elif defined(__osf__)
-   strcpy(version, "/osf");
-
-#elif defined(__hpux)
-   strcpy(version, "/hpux");
-
-#elif defined(__OS2__) || defined(OS2)
-#  if defined(__TURBOC__) /* Borland C/C++ for OS/2 */
-   strcpy(version, "/os2-bc");
-#  elif defined(_MSC_VER) /* Microsoft C or Microsoft QuickC for OS/2 */
-   strcpy(version, "/os2-msc");
-#  elif defined(__WATCOMC__)
-   strcpy(version, "/os2-wc");
-#  elif defined(__IBMC__) /* IBM C/Set++ for OS/2 */
-   strcpy(version, "/os2-ibmc");
-#  elif defined(__HIGHC__)/* MetaWare High C/C++ for OS/2 */
-   strcpy(version, "/os2-hc");
-#  elif defined(__EMX__)  /* EMX for 32-bit OS/2 */
-   strcpy(version, "/os2-emx");
-#  else
-   strcpy(version, "/os2");
-#  endif
-
-#elif defined(__HIGHC__) /* MetaWare High C/C++ for OS/2 */
-   strcpy(version, "/os2-hc");
-
-#elif defined(__IBMC__) && !defined(UNIX)
-/* IBM C/Set++ for OS/2 */
-   strcpy(version, "/os2-ibmc");
-
-#elif defined(__NT__)
-#  if defined(__MSVC__)
-#    if defined(_MAKE_DLL)
-     strcpy(version, "/w32-mvcdll");
-#    else
-     strcpy(version, "/w32-mvc");
-#    endif
-#  elif defined(__MINGW32__)
-   strcpy(version, "/w32-mgw");
-#  elif defined(__TURBOC__) /* Borland C/C++ for Win32 */
-   strcpy(version, "/w32-bc");
-#  elif defined(__WATCOMC__)
-   strcpy(version, "/w32-wc");
-#  elif defined(__EMX__)    /* RSX for Windows NT */
-   strcpy(version, "/w32-rsx");
-#  else
-   strcpy(version, "/w32");
-#  endif
-
-#elif defined(_WINDOWS)
-#  if defined(__WATCOMC__)
-   strcpy(version, "/win-wc");
-#  else
-   strcpy(version, "/win");
-#  endif
-
-#  elif defined(__EMX__)    /* EMX for 32-bit OS/2 or RSX for Windows NT */
-   strcpy(version, "/emx-rsx");
-
-#elif defined(MSDOS) ||  defined(DOS) || defined(__DOS__) || defined(__MSDOS__)
-#  ifdef __DJGPP__
-   strcpy(version, = "/dpmi-djgpp");
-#  elif defined(__WATCOMC__) && defined(__FLAT__)
-   strcpy(version, "/dpmi-wc");
-#  elif defined(__WATCOMC__) && !defined(__FLAT__)
-   strcpy(version, "/dos-wc");
-#  elif defined(__TURBOC__)
-   strcpy(version, "/dos-bc");
-#  elif defined(__MSC__) /* Microsoft C or Microsoft QuickC for MS-DOS */
-   strcpy(version, "/dos-msc");
-#  elif defined(__FLAT__)
-   strcpy(version, "/dpmi");
-#  else
-   strcpy(version, "/dos");
-#  endif
-
-#elif defined(__BEOS__)
-   strcpy(version, "/beos");
-
-#else
-   strcpy(version, "");
-# warning Unknown platform and compiler!
-#endif
-
-    sprintf(version_str,"areastat%s %s-sta %s",version,versionNum,cvs_date);
-
-    printf("%s\n",version_str);
+    printf("%s\n", versionStr);
 
     if (argc > 2)
     {
@@ -1958,7 +1838,7 @@ int main(int argc,char *argv[])
 
     main_config = read_cfg(argv[1]);
 
-    if (main_config->pkt_from == NULL) main_config->pkt_from = strdup(version_str);
+    if (main_config->pkt_from == NULL) main_config->pkt_from = strdup(versionStr);
     if (main_config->pkt_to == NULL) main_config->pkt_to = strdup("All");
     if (main_config->pkt_subj == NULL) main_config->pkt_subj = strdup("Statistics");
     if (main_config->pkt_origin == NULL) main_config->pkt_origin = strdup("\0");
@@ -2000,7 +1880,7 @@ int main(int argc,char *argv[])
         if (main_config->by_wday) print_statistics_by_wdays();
         if (main_config->by_time) print_statistics_by_time();
 
-        fprintf(current_std,"\n Statistics created by %s",version_str);
+        fprintf(current_std,"\n Statistics created by %s",versionStr);
         fprintf(current_std,"\n Written by Dmitry Rusov (C) 2000, The Husky project (C) 2004\n");
 
         fclose(current_std);
