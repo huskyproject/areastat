@@ -1,0 +1,12 @@
+
+# - bug fixed
++ - added new feature
+- - removed
+
+--- Version 1.06
+
++ MSG and JAM message base support
++ For message bases access now used SMAPI library of HUSKY project
++ Programm now distributed with GNU license
+- No use squish.cfg file
++ Some changes in configuration file

@@ -1,0 +1,47 @@
+                    Echostat. Version 1.06 FREEWARE GNU
+
+1. Introduction.
+
+  This programm can be used to create statistics for msg, squish and
+  jam message areas.
+
+  The echostat can generate 12 types of statistics (by name, by from, by to,
+  by from -> to, by size (in bytes), by quote percent, by subjects, by date,
+  by week day, by time and summary statistics for any area).
+  Allows to create statistics for any days, weeks or months.
+
+  The echostat used SMAPI library of HUSKY project for message bases access
+  and can use MSGAPI by Scott Dudley or other libraries. 
+
+2. Command line options.
+
+  Example: echostat cfg_name
+  cfg_name - confuguration file
+
+3. Thanks.
+
+  1) 2:5090/29, Oleg Parshin.
+  2) 2:5090/64.101, Serge Leontieve.
+
+5.  Copyrights.
+
+  This software is provided as is. No warranty of any kind is 
+  expressed or implied. You use at your own risk. The author will not be
+  liable for data loss, damages, loss profits or any other kind of loss
+  while using or misusing this software.
+
+  This software distributed with GNU license (see the copying file).
+
+  All rights on programms and libraries, which were used in this programm,
+  are reserved for authors of these programms.
+
+6. Contact info.
+
+  If you have any questions, bug reports or comments, please contact me
+  at the following addresses:
+
+  E-Mail: rusov94@main.ru
+  Fido: Dmitry Rusov, 2:5090/94
+
+                                                     Dmitry Rusov.
+

@@ -1,0 +1,11 @@
+EchoStat 1.06 multiplatform. *FAST*
+Included win32 and DOS .EXE files.
+FTN message statistics for *.MSG,
+Squish and JAM message areas.
+Generates 12 types of statistics.
+Creates reports in TXT or PKT.
+Easy portable for all platforms.
+Used SMAPI of HUSKY project.
+Sources and some makefiles included.
+Now distributed with GNU license.
+(C) Dmitry Rusov, 2:5090/94
