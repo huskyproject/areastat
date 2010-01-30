@@ -1,11 +1,11 @@
-EchoStat 1.06 multiplatform. *FAST*
-Included win32 and DOS .EXE files.
-FTN message statistics for *.MSG,
+Areastat 1.4 multiplatform. *FAST*
+FTN message statistics for OPUS,
 Squish and JAM message areas.
 Generates 12 types of statistics.
 Creates reports in TXT or PKT.
 Easy portable for all platforms.
-Used SMAPI of HUSKY project.
+Part of HUSKY FTN software project.
 Sources and some makefiles included.
-Now distributed with GNU license.
-(C) Dmitry Rusov, 2:5090/94
+Distributed with GNU GPL.
+(C) 2003 Dmitry Rusov, 2:5090/94
+(C) 2004..Now Husky development team

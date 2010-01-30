@@ -1,7 +1,5 @@
                     AreaStat. Version 1.4.0-stable
 
-                    Echostat. Version 1.06 FREEWARE GNU
-
 1. Introduction.
 
   This programm can be used to create statistics for msg, squish and
@@ -12,20 +10,15 @@
   by week day, by time and summary statistics for any area).
   Allows to create statistics for any days, weeks or months.
 
-  The echostat used SMAPI library of HUSKY project for message bases access
-  and can use MSGAPI by Scott Dudley or other libraries. 
+  Areastat is part of the Husky Fidonet software project. At January 2004
+  it's branched from Echostat version 1.06
 
 2. Command line options.
 
   Example: echostat cfg_name
   cfg_name - confuguration file
 
-3. Thanks.
-
-  1) 2:5090/29, Oleg Parshin.
-  2) 2:5090/64.101, Serge Leontieve.
-
-5.  Copyrights.
+3.  License.
 
   This software is provided as is. No warranty of any kind is 
   expressed or implied. You use at your own risk. The author will not be
@@ -37,13 +30,16 @@
   All rights on programms and libraries, which were used in this programm,
   are reserved for authors of these programms.
 
-6. Contact info.
+4. Authors and contributors
 
-  If you have any questions, bug reports or comments, please contact me
-  at the following addresses:
-
+  Authos or the Echostat is Dmitry Rusov
   E-Mail: rusov94@main.ru
   Fido: Dmitry Rusov, 2:5090/94
 
-                                                     Dmitry Rusov.
+  Thanks by Dmitry Rusov to:
+  Oleg Parshin, 2:5090/29
+  Serge Leontiev, 2:5090/64.101
 
+  Areastat (after Jan 8, 2004) is modified by:
+  Dmitry Sergienko, Michael Chernogor, Andry Lukyanov, Stas Degteff and
+  other members of Husky development team.
