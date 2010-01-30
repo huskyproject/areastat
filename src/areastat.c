@@ -3,7 +3,7 @@
 /***************************************************************************
  *                                                                         *
  *  AreaStat Source, Version 1.4.0-stable                                  *
- *  Copyright (c) 2004 by The Husky project                                *
+ *  Copyleft (c) 2004 by The Husky project                                *
  *  Homepage: http://husky.sourceforge.net                                 *
  *                                                                         *
  *  EchoStat Source, Version 1.06                                          *

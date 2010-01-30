@@ -14,13 +14,6 @@
 
 LIBNAME = areastat
 
-# Version
-VERMAJOR= 1
-VERMINOR= 9
-VERPATCH= 0
-VERH	= $(VERMAJOR).$(VERMINOR)
-VER	= $(VERH).$(VERPATCH)
-
 # Object files (please sort list to easy check by human)
 OBJS	= areastat$(_OBJ)
 

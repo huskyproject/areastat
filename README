@@ -20,19 +20,23 @@
 
 3.  License.
 
-  This software is provided as is. No warranty of any kind is 
-  expressed or implied. You use at your own risk. The author will not be
-  liable for data loss, damages, loss profits or any other kind of loss
-  while using or misusing this software.
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
 
-  This software distributed with GNU license (see the copying file).
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-  All rights on programms and libraries, which were used in this programm,
-  are reserved for authors of these programms.
+  You should have received a copy of the GNU General Public License
+  along with this program (look a file COPYING), or you may download
+  it from http://gnu.org.
 
 4. Authors and contributors
 
-  Authos or the Echostat is Dmitry Rusov
+  Author or the Echostat is Dmitry Rusov
   E-Mail: rusov94@main.ru
   Fido: Dmitry Rusov, 2:5090/94
 
