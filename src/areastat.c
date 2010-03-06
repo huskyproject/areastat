@@ -1621,7 +1621,7 @@ int open_pkt()
 
     global_msgid++;
 
-    sprintf(packet_name,"%s%08lx%s",main_config->pkt_inbound,global_msgid,".pkt");
+    sprintf(packet_name,"%s%08lx.pkt",main_config->pkt_inbound,global_msgid);
 
     if ((out_pkt = fopen(packet_name,"wb")) == NULL)
     {
