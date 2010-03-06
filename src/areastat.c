@@ -32,11 +32,6 @@
 
 #define secs_in_day 86400
 
-typedef struct addr {
-    unsigned int zone, net, node, point;
-    char   *domain;
-} s_addr, *ps_addr;
-
 typedef struct area {
     char    *name;
     char    *path;
@@ -61,8 +56,8 @@ typedef struct config {
     unsigned long areas_count;
     unsigned long pkt_size;
     unsigned char make_pkt;
-    s_addr pkt_orig_addr;
-    s_addr pkt_dest_addr;
+    hs_addr pkt_orig_addr;
+    hs_addr pkt_dest_addr;
     char pkt_password[8];
     char *pkt_from;
     char *pkt_to;
@@ -260,7 +255,7 @@ int DoIsAddrChar(char ch)
     return (ch && strchr("0123456789:/.", ch));
 }
 
-char * ScanNetAddr(s_addr * pnetAddr, char * psz)
+char * ScanNetAddr(hs_addr * pnetAddr, char * psz)
 {
     char * pch, * pchEnd;
 
