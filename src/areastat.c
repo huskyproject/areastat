@@ -362,8 +362,15 @@ int reading_base(unsigned long ii)
 
     if ((in_area=MsgOpenArea(main_config->areas[ii].path, MSGAREA_NORMAL, t1))==NULL)
     {
-        fprintf(stderr,"Error opening area `%s' (type %d) for read!\n\n",
-                main_config->areas[ii].path, t1);
+      char *tl_str="unknown";
+      switch (t1)
+      {
+        case MSGTYPE_SDM: tl_str="Msg (OPUS)"; break;
+        case MSGTYPE_JAM: tl_str="Jam"; break;
+        case MSGTYPE_SQUISH: tl_str="Squish"; break;
+      }
+        fprintf(stderr,"Error opening area `%s' (type %s) for read!\n\n",
+                main_config->areas[ii].path, tl_str);
         exit(1);
     }
 
