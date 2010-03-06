@@ -2,8 +2,8 @@
 
 /***************************************************************************
  *                                                                         *
- *  AreaStat Source, Version 1.4.0-stable                                  *
- *  Copyleft (c) 2004 by The Husky project                                *
+ *  AreaStat                                                               *
+ *  Copyleft (c) 2004-2010 by The Husky project                            *
  *  Homepage: http://husky.sourceforge.net                                 *
  *                                                                         *
  *  EchoStat Source, Version 1.06                                          *
@@ -337,7 +337,7 @@ int reading_base(unsigned long ii)
     char ctrl[1], buffer[BUFSIZE+1], *dummy, *c;
     dword offset, msgn, qsize, textlen;
     long got,i;
-    long t1, nf, nt, qpos;
+    long t1=0, nf, nt, qpos;
     struct _minf mi;
     time_t atime = time(NULL);
     time_t mtime = 0, period = 0;
