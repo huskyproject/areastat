@@ -64,6 +64,7 @@ typedef struct config {
     char *pkt_subj;
     char *pkt_origin;
     char *pkt_inbound;
+    char *pkt_tearline;
     ps_area  areas;
 
 } s_config, *ps_config;
@@ -1195,6 +1196,7 @@ s_config *read_cfg(char *cfg_name)
     config->pkt_subj = NULL;
     config->pkt_origin = NULL;
     config->pkt_inbound = NULL;
+    config->pkt_tearline = NULL;
 
     buff = malloc(BUFSIZE+1);
 
@@ -1464,6 +1466,24 @@ s_config *read_cfg(char *cfg_name)
             continue;
         }
 
+        if (!stricmp(s0,"Pkt_Tearline"))
+        {
+          s1 = strtok(NULL,"\0");
+          if (s1 == NULL) print_err(buff,i);
+          while(*s1 && (*s1 == ' ' || *s1 == '\t')) s1++;
+          j = strlen(s1)-1;
+          while(j && (s1[j] == ' ' || s1[j] == '\t'))
+          {
+            s1[j] = '\0'; j--;
+          }
+          if (!*s1) print_err(buff,i);
+
+          config->pkt_tearline = smalloc(strlen(s1)+1);
+          strcpy(config->pkt_tearline,s1);
+
+          continue;
+        }
+
         if (!stricmp(s0,"Pkt_Origin"))
         {
             s1 = strtok(NULL,"\0");
@@ -1583,6 +1603,7 @@ void free_config()
     nfree((char *)main_config->pkt_subj);
     nfree((char *)main_config->pkt_origin);
     nfree((char *)main_config->pkt_inbound);
+    nfree((char *)main_config->pkt_tearline);
 
     for (i = 0; i < main_config->areas_count; i++)
     {
@@ -1745,7 +1766,14 @@ int write_msg_hdr(int n)
     fwrite(s,strlen(s),1,out_pkt);
     if (ferror(out_pkt)) print_write_err();
 
-    sprintf(s,"\r\x01PID: %s\r",versionStr);
+    fwrite("\r\x01""FLAGS NPD\r",12,1,out_pkt);
+
+    if (strnicmp(main_config->pkt_tearline, versionStr, strlen(versionStr)))
+    {
+    sprintf(s,"\x01PID: %s\r",versionStr);
+    fwrite(s,strlen(s),1,out_pkt);
+    }
+
 
     fwrite(s,strlen(s),1,out_pkt);
     if (ferror(out_pkt)) print_write_err();
@@ -1773,7 +1801,7 @@ int end_msg(unsigned char e)
         if (ferror(out_pkt)) print_write_err();
     }
 
-    sprintf(s,"\r\r--- %s",versionStr);
+    sprintf(s,"\r\r--- %s",main_config->pkt_tearline);
 
     fwrite (s, strlen(s), 1, out_pkt);
     if (ferror(out_pkt)) print_write_err();
@@ -1840,16 +1868,23 @@ int main(int argc,char *argv[])
 
     main_config = read_cfg(argv[1]);
 
-    if (main_config->pkt_from == NULL) main_config->pkt_from = strdup(versionStr);
+    if (main_config->pkt_from == NULL) main_config->pkt_from = sstrdup(versionStr);
     if (main_config->pkt_to == NULL) main_config->pkt_to = strdup("All");
     if (main_config->pkt_subj == NULL) main_config->pkt_subj = strdup("Statistics");
     if (main_config->pkt_origin == NULL) main_config->pkt_origin = strdup("\0");
     if (main_config->pkt_inbound == NULL) main_config->pkt_inbound = strdup("\0");
+    if (main_config->pkt_tearline == NULL) main_config->pkt_tearline = sstrdup(versionStr);
 
     if (strlen(main_config->pkt_inbound) > 256)
     {
         fprintf(stderr,"Inbound path too long\n\n");
         exit(2);
+    }
+
+    if (strlen(main_config->pkt_tearline) > 75)
+    {
+      fprintf(stderr,"Tearline too long\n\n");
+      exit(2);
     }
 
     if (strlen(main_config->pkt_origin) > 50)
