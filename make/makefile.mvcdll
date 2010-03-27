@@ -24,7 +24,7 @@ _EXE	  = .exe
 
 ## programs ##
 CFLAGS	= -nologo -MD -Zp1
-CINCL   = -I$(H_DIR) -I..\..\
+CINCL   = -I$(H_DIR) -I..\..
 CDEFS	= -D__NT__ -DNT -DWINNT -DWIN32 -D_CONSOLE -D_MAKE_DLL
 COPT	= -Ob2
 
