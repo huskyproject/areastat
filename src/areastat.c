@@ -338,7 +338,8 @@ int reading_base(unsigned long ii)
     char ctrl[1], buffer[BUFSIZE+1], *dummy, *c;
     dword offset, msgn, qsize, textlen;
     long got,i;
-    long t1=MSGTYPE_NOTH, nf, nt, qpos;
+    word t1=MSGTYPE_NOTH;
+    long nf, nt, qpos;
     struct _minf mi;
     time_t atime = time(NULL);
     time_t mtime = 0, period = 0;
@@ -361,7 +362,7 @@ int reading_base(unsigned long ii)
 
     MsgOpenApi(&mi);
 
-    if ((in_area=MsgOpenArea(main_config->areas[ii].path, MSGAREA_NORMAL, t1))==NULL)
+    if ((in_area=MsgOpenArea((byte*)main_config->areas[ii].path, MSGAREA_NORMAL, t1))==NULL)
     {
       char *tl_str="unknown";
       switch (t1)
@@ -752,7 +753,7 @@ int print_statistics_by_from()
         if (i >= main_config->by_from) break;
 
         strcpy(diag,"\0");
-        k = ((float)(from_data[i].count/(float)(from_data[0].count))*30);
+        k = (unsigned long)((from_data[i].count/(float)(from_data[0].count))*30);
         if (k <= 0) strcpy(diag,"к"); else
             for (j = 0;j < k ;j++) strcat(diag,"м");
         for (j=0; j<32; j++) name[j] = '\0';
@@ -786,7 +787,7 @@ int print_statistics_by_to()
         if (i >= main_config->by_to) break;
 
         strcpy(diag,"\0");
-        k = ((float)(to_data[i].count/(float)(to_data[0].count))*30);
+        k = (unsigned long)((to_data[i].count/(float)(to_data[0].count))*30);
         if (k <= 0) strcpy(diag,"к"); else
             for (j = 0;j < k ;j++) strcat(diag,"м");
         for (j=0; j<32; j++) name[j] = '\0';
@@ -820,7 +821,7 @@ int print_statistics_by_from_to()
         if (i >= main_config->by_from_to) break;
 
         strcpy(diag,"\0");
-        k = ((float)(from_to_data[i].count/(float)(from_to_data[0].count))*16);
+        k = (unsigned long)((from_to_data[i].count/(float)(from_to_data[0].count))*16);
         if (k <= 0) strcpy(diag,"к"); else
             for (j = 0;j < k ;j++) strcat(diag,"м");
 
@@ -886,7 +887,7 @@ int print_statistics_by_total()
         if (i >= main_config->by_total) break;
 
         strcpy(diag,"\0");
-        k = ((float)(total_data[i].count/(float)(total_data[0].count))*30);
+        k = (unsigned long)((total_data[i].count/(float)(total_data[0].count))*30);
         if (k <= 0) strcpy(diag,"к"); else
             for (j = 0;j < k ;j++) strcat(diag,"м");
         for (j=0; j<32; j++) name[j] = '\0';
@@ -919,7 +920,7 @@ int print_statistics_by_size()
         if (i >= main_config->by_size) break;
 
         strcpy(diag,"\0");
-        k = ((float)(size_data[i].size/(float)(size_data[0].size))*27);
+        k = (unsigned long)((size_data[i].size/(float)(size_data[0].size))*27);
         if (k <= 0) strcpy(diag,"к"); else
             for (j = 0;j < k ;j++) strcat(diag,"м");
         for (j=0; j<32; j++) name[j] = '\0';
@@ -941,7 +942,7 @@ int print_statistics_by_qpercent()
     char diag[80],name[32];
 
     for (i = 0; i < szd_count; i++)
-        size_data[i].qpercent = ((float)size_data[i].qsize/(float)size_data[i].size)*100;
+        size_data[i].qpercent = ((float)size_data[i].qsize/size_data[i].size)*100;
     qsort (size_data, szd_count, sizeof(s_size_item), qp_comparer);
 
     fprintf(current_std,"\n --- Sorted by QPercent. Top %ld\n",main_config->by_qpercent);
@@ -956,7 +957,7 @@ int print_statistics_by_qpercent()
 
         strcpy(diag,"\0");
         if (size_data[0].qpercent >0 )
-            k = ((float)(size_data[i].qpercent/(float)(size_data[0].qpercent))*30);
+            k = (unsigned long)((size_data[i].qpercent/(float)(size_data[0].qpercent))*30);
         else k = 0;
         for (j = 0;j < k ;j++) strcat(diag,"м");
         for (j=0; j<32; j++) name[j] = '\0';
@@ -1017,7 +1018,7 @@ int print_statistics_by_date()
     for (i = 0; i < dd_count; i++)
     {
         strcpy(diag,"\0");
-        k = ((float)(date_data[i].count/(float)(maxcount))*59);
+        k = (unsigned long)((date_data[i].count/(float)(maxcount))*59);
         if (k <= 0) strcpy(diag,"к"); else
             for (j = 0;j < k ;j++) strcat(diag,"м");
 
@@ -1059,7 +1060,7 @@ int print_statistics_by_wdays()
     for (i = 0; i <= 6; i++)
     {
         strcpy(diag,"\0");
-        k = ((float)(counts[i]/(float)(maxcount))*60);
+        k = (unsigned long)((counts[i]/(float)(maxcount))*60);
         for (j = 0;j < k ;j++) strcat(diag,"м");
 
         fprintf(current_std," %s %6ldГ%-60s\n",weekday_ab[i],counts[i],diag);
@@ -1119,7 +1120,7 @@ int print_statistics_by_time()
 
         for (i = 0; i <= 23; i++)
         {
-            k = ((float)(counts[i]/(float)(maxcount))*20);
+            k = (unsigned long)((counts[i]/(float)(maxcount))*20);
 
             if (k >= j) strcat(diag,"ол "); else
 
