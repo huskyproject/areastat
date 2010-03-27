@@ -335,7 +335,7 @@ int reading_base(unsigned long ii)
     HAREA in_area;
     HMSG in_msg;
     void *ptr;
-    char ctrl[1], buffer[BUFSIZE+1], *dummy, *c;
+    char buffer[BUFSIZE+1], *dummy, *c;
     dword offset, msgn, qsize, textlen;
     long got,i;
     word t1=MSGTYPE_NOTH;
@@ -387,7 +387,7 @@ int reading_base(unsigned long ii)
         }
         if ((in_msg=MsgOpenMsg(in_area,MOPEN_READ,msgn))==NULL) continue;
         ptr = in_msg;
-        MsgReadMsg(in_msg, &msg, 0L, 0L, NULL, 0, ctrl);
+        MsgReadMsg(in_msg, &msg, 0L, 0L, NULL, 0, NULL);
         qsize = 0;
         textlen = MsgGetTextLen(in_msg);
         for (offset=0L; offset < textlen;)
