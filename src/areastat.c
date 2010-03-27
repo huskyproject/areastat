@@ -337,7 +337,8 @@ int reading_base(unsigned long ii)
     void *ptr;
     char buffer[BUFSIZE+1], *dummy, *c;
     dword offset, msgn, qsize, textlen;
-    long got,i;
+    long got;
+    unsigned long i;
     word t1=MSGTYPE_NOTH;
     long nf, nt, qpos;
     struct _minf mi;
@@ -590,7 +591,7 @@ int reading_base(unsigned long ii)
             {
                 tttd_count++;
                 time_data = srealloc (time_data, tttd_count * sizeof(s_time_item));
-                time_data[tttd_count-1].hour = tmp_tm.tm_hour;
+                time_data[tttd_count-1].hour = (unsigned char)tmp_tm.tm_hour;
                 time_data[tttd_count-1].count = 1;
             }
         }
@@ -660,7 +661,7 @@ int reading_base(unsigned long ii)
 
 int free_all()
 {
-    int i;
+    unsigned long i;
 
     for (i = 0; i<gd_count; i++)
     {
@@ -680,7 +681,7 @@ int print_summary_statistics(unsigned long i)
     {
         fd = date_data[0].tm_date;
         ld = date_data[dd_count-1].tm_date;
-        days = ((date_data[dd_count-1].date-date_data[0].date)/secs_in_day)+1;
+        days = (unsigned long)((date_data[dd_count-1].date-date_data[0].date)/secs_in_day)+1;
 
     } else  {
 
@@ -700,7 +701,7 @@ int print_summary_statistics(unsigned long i)
     fprintf(current_std,"  Total users: %ld\n",gd_count);
     fprintf(current_std,"  Active users: %ld\n",fd_count);
     fprintf(current_std,"  Days: %ld\n",days);
-    fprintf(current_std,"  Msgs per day: %ld\n",(unsigned long)(float)messages/days);
+    fprintf(current_std,"  Msgs per day: %ld\n",(unsigned long)messages/days);
 
     return 0;
 }
