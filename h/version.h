@@ -7,9 +7,9 @@
 
 /* basic version number */
 #define VER_MAJOR 1
-#define VER_MINOR 4
+#define VER_MINOR 6
 #define VER_PATCH 0
-#define VER_BRANCH BRANCH_STABLE
+#define VER_BRANCH BRANCH_CURRENT
 
 extern char      *versionStr;
 
