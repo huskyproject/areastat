@@ -1557,30 +1557,30 @@ void free_items()
 {
     unsigned long i;
 
-    for (i = 0; i < gd_count; i++) nfree((char *)global_data[i].name);
+    for (i = 0; i < gd_count; i++) nfree(global_data[i].name);
     nfree(global_data);
 
     if (main_config->by_from)
     {
-        for (i = 0; i < fd_count; i++) nfree((char *)from_data[i].name);
+        for (i = 0; i < fd_count; i++) nfree(from_data[i].name);
         nfree (from_data);
     }
 
     if (main_config->by_to)
     {
-        for (i = 0; i < td_count; i++) nfree((char *)to_data[i].name);
+        for (i = 0; i < td_count; i++) nfree(to_data[i].name);
         nfree (to_data);
     }
 
     if (main_config->by_from_to)
     {
-        for (i = 0; i < ftd_count; i++) nfree((char *)from_to_data[i].name);
+        for (i = 0; i < ftd_count; i++) nfree(from_to_data[i].name);
         nfree (from_to_data);
     }
 
     if (main_config->by_subj)
     {
-        for (i = 0; i < sd_count; i++) nfree((char *)subj_data[i].name);
+        for (i = 0; i < sd_count; i++) nfree(subj_data[i].name);
         nfree (subj_data);
     }
 
@@ -1590,7 +1590,7 @@ void free_items()
 
     if (main_config->by_size)
     {
-        for (i = 0; i < szd_count; i++) nfree((char *)size_data[i].name);
+        for (i = 0; i < szd_count; i++) nfree(size_data[i].name);
         nfree (size_data);
     }
 
@@ -1600,18 +1600,18 @@ void free_config()
 {
     unsigned long i;
 
-    nfree((char *)main_config->pkt_from);
-    nfree((char *)main_config->pkt_to);
-    nfree((char *)main_config->pkt_subj);
-    nfree((char *)main_config->pkt_origin);
-    nfree((char *)main_config->pkt_inbound);
-    nfree((char *)main_config->pkt_tearline);
+    nfree(main_config->pkt_from);
+    nfree(main_config->pkt_to);
+    nfree(main_config->pkt_subj);
+    nfree(main_config->pkt_origin);
+    nfree(main_config->pkt_inbound);
+    nfree(main_config->pkt_tearline);
 
     for (i = 0; i < main_config->areas_count; i++)
     {
-        nfree((char *)main_config->areas[i].name);
-        nfree((char *)main_config->areas[i].path);
-        nfree((char *)main_config->areas[i].out_file);
+        nfree(main_config->areas[i].name);
+        nfree(main_config->areas[i].path);
+        nfree(main_config->areas[i].out_file);
     }
 
     nfree(main_config->areas);
@@ -1638,7 +1638,7 @@ int open_pkt()
 
     global_msgid++;
 
-    sprintf(packet_name,"%s%08lx.pkt",main_config->pkt_inbound,global_msgid);
+    sprintf(packet_name,"%s%08lx.pkt",main_config->pkt_inbound,(long)global_msgid);
 
     if ((out_pkt = fopen(packet_name,"wb")) == NULL)
     {
@@ -1755,13 +1755,13 @@ int write_msg_hdr(int n)
         sprintf(s,"\r\x01MSGID: %d:%d/%d.%d %08lx",
                 main_config->pkt_orig_addr.zone,main_config->pkt_orig_addr.net,
                 main_config->pkt_orig_addr.node,main_config->pkt_orig_addr.point,
-                global_msgid);
+                (long)global_msgid);
 
     } else {
 
         sprintf(s,"\r\x01MSGID: %d:%d/%d %08lx",
                 main_config->pkt_orig_addr.zone,main_config->pkt_orig_addr.net,
-                main_config->pkt_orig_addr.node,global_msgid);
+                main_config->pkt_orig_addr.node,(long)global_msgid);
 
     }
 
