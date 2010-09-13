@@ -1,0 +1,51 @@
+.TH "areastat" "1" "$Revision$" "Stas Degteff" "Husky"
+.SH "NAME"
+.LP 
+areastat \- create statistics for fidonet messagebases
+.SH "SYNTAX"
+.LP 
+areastat <\fIcfgname\fP>
+.SH "DESCRIPTION"
+.LP 
+This programm can be used to create statistics for msg, squish and jam message areas.
+
+.br 
+The echostat can generate 12 types of statistics (by name, by from, by to,
+by from \-> to, by size (in bytes), by quote percent, by subjects, by date,
+by week day, by time and summary statistics for any area).
+Allows to create statistics for any days, weeks or months.
+
+.br 
+Areastat is part of the Husky Fidonet software project. At January 2004
+it's branched from Echostat version 1.06
+
+.SH "OPTIONS"
+.LP 
+.TP 
+\fBcfgname\fR
+Config file of areastat.
+.SH "EXAMPLES"
+.LP 
+If you uses POSIX\-compatible operation system (e.g. FreeBSD, GNU/Linux)
+You may run following command to generate area list for areastat config file:
+
+  grep \-i echoarea $FIDOCONFIG | \
+  awk '{print "Area " $2 " " $5 " " $3 " "  $2 ".stt";}' >> areastat.conf
+
+Next You may run areastat with generated config:
+
+  areastat areastat.conf
+.SH "AUTHORS"
+.LP 
+Author of the original Echostat is Dmitry Rusov: <rusov94@main.ru>, 2:5090/94@FIDONET
+
+Thanks by Dmitry Rusov to:
+  Oleg Parshin, 2:5090/29@FIDONET and
+  Serge Leontiev, 2:5090/64.101@FIDONET
+
+Areastat (after Jan 8, 2004) is modified by:
+Dmitry Sergienko, Michael Chernogor, Andry Lukyanov, Stas Degteff and
+other members of Husky development team (see http://husky.sourceforge.net/)
+.SH "SEE ALSO"
+.LP 
+areastat.conf(5)

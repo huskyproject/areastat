@@ -1,0 +1,101 @@
+.TH "areastst.conf" "5" "$Revision$" "Stas Degteff" "Husky"
+.SH "NAME"
+.LP 
+\fBmyconfig\fR \- Configuration file for my program
+.SH "DESCRIPTION"
+.LP 
+The program \fBareastat\fR uses a configuration file usually named
+\fBareastst.conf\fR. This configuration file is specified in the command line.
+.LP 
+\fBareastst.conf\fR contains lines, each line beginns with ';' char is comment line, another non\-empty lines begins with parameter token, space and following parameter's value(s).
+.SH "PARAMETERS"
+.LP 
+\fBArea\fR \fIname\fR \fItype\fR \fIpath\fR \fIout_file\fR
+Defines messagebase, where:
+ \fIname\fR \- echotag.
+ \fItype\fR \- msg, squish or jam
+ \fIpath\fR \- path to MSG or filename without extension (JAM/SQUISH)
+ \fIout_file\fR \- statistics will be written in this file
+
+.br 
+\fBStat_Period\fR \fIage\fR
+Specifies period of statistic, where:
+ \fIage\fR \- period value, in days, or weeks prefixed by \fBw\fR, or months prefixed by \fBm\fR, for example:
+ \fBStat_Period 60\fR \- statistics for 60 days
+ \fBStat_Period w2\fR \- statistics for 2 weeks
+ \fBStat_Period m1\fR \- statistics for 1 month
+
+.br 
+\fBBy_Name\fR
+ Create statistics by name
+
+.br 
+\fBBy_from\fR \fIquantity\fR
+ Create statistics by originator not more \fIquantity\fR addresses
+
+.br 
+\fBBy_to\fR \fIquantity\fR
+ Create statistics by recipient not more \fIquantity\fR addresses
+
+.br 
+\fBBy_fromto\fR \fIquantity\fR
+ Create statistics by originator\-recipient pairs, not more \fIquantity\fR lines.
+
+.br 
+\fBBy_total\fR \fIquantity\fR
+ Create statistics by Total not more \fIquantity\fR lines.
+
+.br 
+\fBBy_size\fR \fIquantity\fR
+ Create statistics by size not more \fIquantity\fR lines.
+
+.br 
+\fBBy_QPercent\fR \fIquantity\fR
+ Create statistics by Quote Percent not more \fIquantity\fR lines.
+
+.br 
+\fBSubj_By_Total\fR \fIquantity\fR
+ Create statistics by Subjects not more \fIquantity\fR lines.
+
+.br 
+\fBBy_Date\fR
+ Create statistics by date
+
+.br 
+\fBBy_WDay\fR
+ Create statistics by Week Day
+
+.br 
+\fBBy_Time\fR
+ Create statistics by Time
+
+.br 
+\fBMake_Pkt\fR
+ Create PKT\-file with statistics
+
+.br 
+\fBPkt_Size\fR \fIbytes\fR
+ Specifies maximal size of one message in bytes
+
+.br 
+\fBPkt_Inbound\fR \fIdirectory\fR
+ Specifies inbound path. If not spacified, \fBareastat\fR writes file into current folder.
+
+.br 
+<fBPkt_FromName>\fR \fIname\fR
+ Specifies name for "From" field of generated message.
+
+.br 
+\fBPkt_ToName\fR \fIname\fR
+ Specifies name for "To" field of generated message.
+
+.br 
+\fBPkt_Subj\fR \fIstring\fR
+ Specifies subject of generated message.
+
+.br 
+\fBPkt_OrigAddress\fR \fIFTN address\fR
+ Specifies origination address of generated message
+.SH "SEE ALSO"
+.LP 
+areastat(1)

@@ -32,6 +32,7 @@ CDEFS=-D$(OSTYPE) -DUNAME=\"$(UNAME)\" $(ADDCDEFS)
 SRC_DIR=src/
 
 OBJS= areastat.o
+MANS= man/areastat.1 man/areastat.cfg.5
 
 areastat: $(OBJS)
 		$(CC) $(OBJS) $(LFLAGS) $(LIBS) -o areastat
@@ -46,12 +47,12 @@ info:
 html:
 	export LC_ALL=C; makeinfo --html --no-split areastat.texi
 
-docs: info html
+docs: #info html
 
 FORCE:
 
-man: FORCE
-	gzip -9c man/areastat.1 > areastat.1.gz
+man: $(MANS)
+	for m in $(MANS); do gzip -9c $$m > $$m.gz ; done
 
 clean:
 		rm -f *.o *~ src/*.o src/*~
@@ -60,7 +61,7 @@ distclean: clean
 	-$(RM) $(RMOPT) areastat
 	-$(RM) $(RMOPT) areastat.info
 	-$(RM) $(RMOPT) areastat.html
-	-$(RM) $(RMOPT) areastat.1.gz
+	-for m in $(MANS); do $(RM) $(RMOPT) $$m ; done
 
 all: areastat docs man
 
@@ -77,7 +78,7 @@ ifdef HTMLDIR
 endif
 ifdef MANDIR
 	-$(MKDIR) $(MKDIROPT) $(MANDIR)$(DIRSEP)man1
-	$(INSTALL) $(IMOPT) areastat.1.gz $(MANDIR)$(DIRSEP)man1
+	for m in $(MANS); do $(INSTALL) $(IMOPT) $$m.gz $(MANDIR)$(DIRSEP)man`echo $$m | sed s/.*\\.//`/; done
 endif
 
 uninstall:
