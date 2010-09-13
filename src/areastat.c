@@ -2,8 +2,8 @@
 
 /***************************************************************************
  *                                                                         *
- *  AreaStat                                                               *
- *  Copyleft (c) 2004-2010 by The Husky project                            *
+ *  AreaStat Source, Version 1.4.0-stable                                  *
+ *  Copyleft (c) 2004 by The Husky project                                *
  *  Homepage: http://husky.sourceforge.net                                 *
  *                                                                         *
  *  EchoStat Source, Version 1.06                                          *
@@ -17,20 +17,31 @@
 #include <string.h>
 #include <time.h>
 
-#include <huskylib/huskylib.h>
-//#include <smapi/typedefs.h>
-//#include <smapi/progprot.h>
+#include <smapi/typedefs.h>
+#include <smapi/progprot.h>
+#include <smapi/prog.h>
 #include <smapi/msgapi.h>
+
+#define FIDOCONFIG_H
+#define FCONF_EXT extern
+#include <fidoconf/version.h>
 
 #include "areastat.h"
 #include "version.h"
 
 #define BUFSIZE 4096
-#define nfree(a) { if (a != NULL) { free(a); a = NULL; } }
+#ifndef nfree
+#define nfree(a) { if (a != NULL) { free(a); (a) = NULL; } }
+#endif
 #define ISDIGIT(ch) ((ch) >= '0' && (ch) <= '9')
 #define ISLWSP(ch) ((ch) == ' ' || (ch) == '\t')
 
 #define secs_in_day 86400
+
+typedef struct addr {
+    unsigned int zone, net, node, point;
+    char   *domain;
+} s_addr, *ps_addr;
 
 typedef struct area {
     char    *name;
@@ -56,15 +67,14 @@ typedef struct config {
     unsigned long areas_count;
     unsigned long pkt_size;
     unsigned char make_pkt;
-    hs_addr pkt_orig_addr;
-    hs_addr pkt_dest_addr;
+    s_addr pkt_orig_addr;
+    s_addr pkt_dest_addr;
     char pkt_password[8];
     char *pkt_from;
     char *pkt_to;
     char *pkt_subj;
     char *pkt_origin;
     char *pkt_inbound;
-    char *pkt_tearline;
     ps_area  areas;
 
 } s_config, *ps_config;
@@ -137,19 +147,19 @@ char *versionStr;
 unsigned int isecs;
 
 static int aDaysFromJan1st[13] = {
-    0,                                  // Jan
-    31,                                 // Feb
-    31+28,                              // Mar
-    31+28+31,                           // Apr
-    31+28+31+30,                        // May
-    31+28+31+30+31,                     // Jun
-    31+28+31+30+31+30,                  // Jul
-    31+28+31+30+31+30+31,               // Aug
-    31+28+31+30+31+30+31+31,            // Sep
-    31+28+31+30+31+30+31+31+30,         // Oct
-    31+28+31+30+31+30+31+31+30+31,      // Nov
-    31+28+31+30+31+30+31+31+30+31+30,   // Dec
-    31+28+31+30+31+30+31+31+30+31+30+31 // Jan
+    0,                                  /* Jan */
+    31,                                 /* Feb */
+    31+28,                              /* Mar */
+    31+28+31,                           /* Apr */
+    31+28+31+30,                        /* May */
+    31+28+31+30+31,                     /* Jun */
+    31+28+31+30+31+30,                  /* Jul */
+    31+28+31+30+31+30+31,               /* Aug */
+    31+28+31+30+31+30+31+31,            /* Sep */
+    31+28+31+30+31+30+31+31+30,         /* Oct */
+    31+28+31+30+31+30+31+31+30+31,      /* Nov */
+    31+28+31+30+31+30+31+31+30+31+30,   /* Dec */
+    31+28+31+30+31+30+31+31+30+31+30+31 /* Jan */
 };
 
 static int days_in_months[12] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
@@ -256,7 +266,7 @@ int DoIsAddrChar(char ch)
     return (ch && strchr("0123456789:/.", ch));
 }
 
-char * ScanNetAddr(hs_addr * pnetAddr, char * psz)
+char * ScanNetAddr(s_addr * pnetAddr, char * psz)
 {
     char * pch, * pchEnd;
 
@@ -312,7 +322,7 @@ unsigned long get_time_from_stamp (struct _stamp mtime)
     sec  = mtime.time.ss * 2;
     day  = mtime.date.da;
     mon  = mtime.date.mo;
-    year = mtime.date.yr + 80;        // Years since 1900
+    year = mtime.date.yr + 80;        /* Years since 1900 */
 
     nYearsSince1970 = year - 70;
 
@@ -335,12 +345,10 @@ int reading_base(unsigned long ii)
     HAREA in_area;
     HMSG in_msg;
     void *ptr;
-    char buffer[BUFSIZE+1], *dummy, *c;
+    char ctrl[1], buffer[BUFSIZE+1], *dummy, *c;
     dword offset, msgn, qsize, textlen;
-    long got;
-    unsigned long i;
-    word t1=MSGTYPE_NOTH;
-    long nf, nt, qpos;
+    long got,i;
+    long t1=MSGTYPE_NOTH, nf, nt, qpos;
     struct _minf mi;
     time_t atime = time(NULL);
     time_t mtime = 0, period = 0;
@@ -363,17 +371,18 @@ int reading_base(unsigned long ii)
 
     MsgOpenApi(&mi);
 
-    if ((in_area=MsgOpenArea((byte*)main_config->areas[ii].path, MSGAREA_NORMAL, t1))==NULL)
+    if ((in_area=MsgOpenArea((unsigned char*)main_config->areas[ii].path, MSGAREA_NORMAL, t1))==NULL)
     {
-      char *tl_str="unknown";
-      switch (t1)
+      char *t1_str="unknown";
+      switch(t1)
       {
-        case MSGTYPE_SDM: tl_str="Msg (OPUS)"; break;
-        case MSGTYPE_JAM: tl_str="Jam"; break;
-        case MSGTYPE_SQUISH: tl_str="Squish"; break;
+        case MSGTYPE_SDM: t1_str="Msg (OPUS)"; break;
+        case MSGTYPE_JAM: t1_str="Jam"; break;
+        case MSGTYPE_SQUISH: t1_str="Squish"; break;
+        case MSGTYPE_NOTH: t1_str="Not spacified"; break;
       }
-        fprintf(stderr,"Error opening area `%s' (type %s) for read!\n\n",
-                main_config->areas[ii].path, tl_str);
+      fprintf(stderr,"Error opening area `%s' (type %s) for read!\n\n",
+                main_config->areas[ii].path, t1_str);
         exit(1);
     }
 
@@ -383,25 +392,25 @@ int reading_base(unsigned long ii)
     {
         if ((msgn % 5)==0)
         {
-            fprintf(stderr,"Scanning msg: %ld\r",msgn);
+            fprintf(stderr,"Scanning msg: %li\r",msgn);
             fflush(stdout);
         }
         if ((in_msg=MsgOpenMsg(in_area,MOPEN_READ,msgn))==NULL) continue;
         ptr = in_msg;
-        MsgReadMsg(in_msg, &msg, 0L, 0L, NULL, 0, NULL);
+        MsgReadMsg(in_msg, &msg, 0L, 0L, NULL, 0, (unsigned char*)ctrl);
         qsize = 0;
         textlen = MsgGetTextLen(in_msg);
         for (offset=0L; offset < textlen;)
         {
             if ((textlen-offset) >= BUFSIZE)
-                got = MsgReadMsg(in_msg, NULL, offset, BUFSIZE, buffer, 0L, NULL);
+                got = MsgReadMsg(in_msg, NULL, offset, BUFSIZE, (unsigned char*)buffer, 0L, NULL);
             else
-                got = MsgReadMsg(in_msg, NULL, offset, textlen-offset, buffer, 0L, NULL);
+                got = MsgReadMsg(in_msg, NULL, offset, textlen-offset, (unsigned char*)buffer, 0L, NULL);
 
             if (got == 0)
                 break; /* we read 0 bytes - the end of message */
             offset += got;
-            // find a quote
+            /* find a quote */
             c = strtok (buffer, "\n\r");
             while (c != NULL)
             {
@@ -439,8 +448,10 @@ int reading_base(unsigned long ii)
         period = atime - mtime;
         tmp_tm = *localtime (&mtime);
         tmp_tm.tm_mon++;
-        //printf("%02d-%02d-%04d,",tmp_tm.tm_mday,tmp_tm.tm_mon,tmp_tm.tm_year+1900);
-        //printf("%02d:%02d:%02d.",tmp_tm.tm_hour,tmp_tm.tm_hour,tmp_tm.tm_min,tmp_tm.tm_sec);
+/*
+        printf("%02d-%02d-%04d,",tmp_tm.tm_mday,tmp_tm.tm_mon,tmp_tm.tm_year+1900);
+        printf("%02d:%02d:%02d.",tmp_tm.tm_hour,tmp_tm.tm_hour,tmp_tm.tm_min,tmp_tm.tm_sec);
+*/
 #if 0
         printf("\nmessage time: %s",ctime(&mtime));
         printf("message time: %02d-%02d-%04d  %02d:%02d:%02d\n",tmp_tm.tm_mday,
@@ -449,16 +460,16 @@ int reading_base(unsigned long ii)
 #endif
         if (!period || period > main_config->days_of_stat * secs_in_day) continue;
         messages++;
-        // by name
+        /*  by name */
         nf = 0; nt = 0;
         for (i=0; i<gd_count; i++)
         {
-            if (stricmp(global_data[i].name,msg.from) == 0)
+            if (stricmp(global_data[i].name,(char*)msg.from) == 0)
             {
                 global_data[i].from++;
                 nf = 1;
             }
-            if (stricmp(global_data[i].name,msg.to) == 0)
+            if (stricmp(global_data[i].name,(char*)msg.to) == 0)
             {
                 global_data[i].to++;
                 nt = 1;
@@ -469,8 +480,8 @@ int reading_base(unsigned long ii)
         {
             gd_count++;
             global_data = srealloc (global_data, gd_count * sizeof(s_unsorted_item));
-            global_data[gd_count-1].name = smalloc(strlen(msg.from)+1);
-            strcpy (global_data[gd_count-1].name,msg.from);
+            global_data[gd_count-1].name = smalloc(strlen((char*)msg.from)+1);
+            strcpy (global_data[gd_count-1].name,(char*)msg.from);
             global_data[gd_count-1].from = 1;
             global_data[gd_count-1].to = 0;
         }
@@ -480,18 +491,18 @@ int reading_base(unsigned long ii)
         {
             gd_count++;
             global_data = srealloc (global_data, gd_count * sizeof(s_unsorted_item));
-            global_data[gd_count-1].name = smalloc(strlen(msg.to)+1);
-            strcpy (global_data[gd_count-1].name,msg.to);
+            global_data[gd_count-1].name = smalloc(strlen((char*)msg.to)+1);
+            strcpy (global_data[gd_count-1].name,(char*)msg.to);
             global_data[gd_count-1].from = 0;
             global_data[gd_count-1].to = 1;
         }
-        // by from
+        /*  by from */
         if (main_config->by_from)
         {
             nf = 0;
             for (i = 0; i < fd_count; i++)
             {
-                if (!stricmp(from_data[i].name,msg.from))
+                if (!stricmp(from_data[i].name,(char*)msg.from))
                 {
                     from_data[i].count++;
                     nf = 1;
@@ -502,18 +513,18 @@ int reading_base(unsigned long ii)
             {
                 fd_count++;
                 from_data = srealloc (from_data,fd_count * sizeof(s_named_item));
-                from_data[fd_count-1].name = (char *) smalloc(strlen(msg.from)+1);
-                strcpy (from_data[fd_count-1].name,msg.from);
+                from_data[fd_count-1].name = (char *) smalloc(strlen((char*)msg.from)+1);
+                strcpy (from_data[fd_count-1].name,(char*)msg.from);
                 from_data[fd_count-1].count = 1;
             }
         }
-        // by to
+        /*  by to */
         if (main_config->by_to)
         {
             nf = 0;
             for (i = 0; i < td_count; i++)
             {
-                if (!stricmp(to_data[i].name,msg.to))
+                if (!stricmp(to_data[i].name,(char*)msg.to))
                 {
                     to_data[i].count++;
                     nf = 1;
@@ -524,18 +535,18 @@ int reading_base(unsigned long ii)
             {
                 td_count++;
                 to_data = srealloc (to_data, td_count * sizeof(s_named_item));
-                to_data[td_count-1].name = (char *) smalloc(strlen(msg.to)+1);
-                strcpy (to_data[td_count-1].name,msg.to);
+                to_data[td_count-1].name = (char *) smalloc(strlen((char*)msg.to)+1);
+                strcpy (to_data[td_count-1].name,(char*)msg.to);
                 to_data[td_count-1].count = 1;
             }
         }
-        // by subj
+        /*  by subj */
         if (main_config->by_subj)
         {
             nf = 0;
             for (i = 0; i < sd_count; i++)
             {
-                if (!stricmp(subj_data[i].name,msg.subj))
+                if (!stricmp(subj_data[i].name,(char*)msg.subj))
                 {
                     subj_data[i].count++;
                     nf = 1;
@@ -546,13 +557,13 @@ int reading_base(unsigned long ii)
             {
                 sd_count++;
                 subj_data = srealloc (subj_data, sd_count * sizeof(s_named_item));
-                subj_data[sd_count-1].name = (char *) smalloc(strlen(msg.subj)+1);
-                strcpy (subj_data[sd_count-1].name,msg.subj);
+                subj_data[sd_count-1].name = (char *) smalloc(strlen((char*)msg.subj)+1);
+                strcpy (subj_data[sd_count-1].name,(char*)msg.subj);
                 subj_data[sd_count-1].count = 1;
             }
         }
 
-        // by date
+        /*  by date */
         nf = 0;
         for (i = 0; i < dd_count; i++)
         {
@@ -574,7 +585,7 @@ int reading_base(unsigned long ii)
             date_data[dd_count-1].count = 1;
         }
 
-        // by time
+        /*  by time */
         if (main_config->by_time)
         {
             nf = 0;
@@ -591,18 +602,18 @@ int reading_base(unsigned long ii)
             {
                 tttd_count++;
                 time_data = srealloc (time_data, tttd_count * sizeof(s_time_item));
-                time_data[tttd_count-1].hour = (unsigned char)tmp_tm.tm_hour;
+                time_data[tttd_count-1].hour = tmp_tm.tm_hour;
                 time_data[tttd_count-1].count = 1;
             }
         }
 
-        // by size
+        /*  by size */
         if (main_config->by_size)
         {
             nf = 0;
             for (i = 0; i < szd_count; i++)
             {
-                if (!stricmp(size_data[i].name,msg.from))
+                if (!stricmp(size_data[i].name,(char*)msg.from))
                 {
                     size_data[i].size += offset;
                     size_data[i].qsize += qsize;
@@ -614,22 +625,22 @@ int reading_base(unsigned long ii)
             {
                 szd_count++;
                 size_data = srealloc (size_data, szd_count * sizeof(s_size_item));
-                size_data[szd_count-1].name = (char *) smalloc(strlen(msg.from)+1);
-                strcpy (size_data[szd_count-1].name,msg.from);
+                size_data[szd_count-1].name = (char *) smalloc(strlen((char*)msg.from)+1);
+                strcpy (size_data[szd_count-1].name,(char*)msg.from);
                 size_data[szd_count-1].size = offset;
                 size_data[szd_count-1].qsize = qsize;
             }
         }
 
-        // by from -> to
+        /*  by from -> to */
         if (main_config->by_from_to)
         {
 
             nf = 0;
-            dummy = (char *) smalloc (strlen(msg.from)+strlen(msg.to)+2);
-            strcpy (dummy,msg.from);
+            dummy = (char *) smalloc (strlen((char*)msg.from)+strlen((char*)msg.to)+2);
+            strcpy (dummy,(char*)msg.from);
             strcat (dummy,"");
-            strcat (dummy,msg.to);
+            strcat (dummy,(char*)msg.to);
             for (i = 0; i < ftd_count; i++)
             {
                 if (!stricmp(from_to_data[i].name,dummy))
@@ -661,7 +672,7 @@ int reading_base(unsigned long ii)
 
 int free_all()
 {
-    unsigned long i;
+    int i;
 
     for (i = 0; i<gd_count; i++)
     {
@@ -681,7 +692,7 @@ int print_summary_statistics(unsigned long i)
     {
         fd = date_data[0].tm_date;
         ld = date_data[dd_count-1].tm_date;
-        days = (unsigned long)((date_data[dd_count-1].date-date_data[0].date)/secs_in_day)+1;
+        days = ((date_data[dd_count-1].date-date_data[0].date)/secs_in_day)+1;
 
     } else  {
 
@@ -701,7 +712,7 @@ int print_summary_statistics(unsigned long i)
     fprintf(current_std,"  Total users: %ld\n",gd_count);
     fprintf(current_std,"  Active users: %ld\n",fd_count);
     fprintf(current_std,"  Days: %ld\n",days);
-    fprintf(current_std,"  Msgs per day: %ld\n",(unsigned long)messages/days);
+    fprintf(current_std,"  Msgs per day: %ld\n",(unsigned long)(float)messages/days);
 
     return 0;
 }
@@ -754,7 +765,7 @@ int print_statistics_by_from()
         if (i >= main_config->by_from) break;
 
         strcpy(diag,"\0");
-        k = (unsigned long)((from_data[i].count/(float)(from_data[0].count))*30);
+        k = ((float)(from_data[i].count/(float)(from_data[0].count))*30);
         if (k <= 0) strcpy(diag,"к"); else
             for (j = 0;j < k ;j++) strcat(diag,"м");
         for (j=0; j<32; j++) name[j] = '\0';
@@ -788,7 +799,7 @@ int print_statistics_by_to()
         if (i >= main_config->by_to) break;
 
         strcpy(diag,"\0");
-        k = (unsigned long)((to_data[i].count/(float)(to_data[0].count))*30);
+        k = ((float)(to_data[i].count/(float)(to_data[0].count))*30);
         if (k <= 0) strcpy(diag,"к"); else
             for (j = 0;j < k ;j++) strcat(diag,"м");
         for (j=0; j<32; j++) name[j] = '\0';
@@ -822,7 +833,7 @@ int print_statistics_by_from_to()
         if (i >= main_config->by_from_to) break;
 
         strcpy(diag,"\0");
-        k = (unsigned long)((from_to_data[i].count/(float)(from_to_data[0].count))*16);
+        k = ((float)(from_to_data[i].count/(float)(from_to_data[0].count))*16);
         if (k <= 0) strcpy(diag,"к"); else
             for (j = 0;j < k ;j++) strcat(diag,"м");
 
@@ -888,7 +899,7 @@ int print_statistics_by_total()
         if (i >= main_config->by_total) break;
 
         strcpy(diag,"\0");
-        k = (unsigned long)((total_data[i].count/(float)(total_data[0].count))*30);
+        k = ((float)(total_data[i].count/(float)(total_data[0].count))*30);
         if (k <= 0) strcpy(diag,"к"); else
             for (j = 0;j < k ;j++) strcat(diag,"м");
         for (j=0; j<32; j++) name[j] = '\0';
@@ -921,7 +932,7 @@ int print_statistics_by_size()
         if (i >= main_config->by_size) break;
 
         strcpy(diag,"\0");
-        k = (unsigned long)((size_data[i].size/(float)(size_data[0].size))*27);
+        k = ((float)(size_data[i].size/(float)(size_data[0].size))*27);
         if (k <= 0) strcpy(diag,"к"); else
             for (j = 0;j < k ;j++) strcat(diag,"м");
         for (j=0; j<32; j++) name[j] = '\0';
@@ -943,7 +954,7 @@ int print_statistics_by_qpercent()
     char diag[80],name[32];
 
     for (i = 0; i < szd_count; i++)
-        size_data[i].qpercent = ((float)size_data[i].qsize/size_data[i].size)*100;
+        size_data[i].qpercent = ((float)size_data[i].qsize/(float)size_data[i].size)*100;
     qsort (size_data, szd_count, sizeof(s_size_item), qp_comparer);
 
     fprintf(current_std,"\n --- Sorted by QPercent. Top %ld\n",main_config->by_qpercent);
@@ -958,13 +969,13 @@ int print_statistics_by_qpercent()
 
         strcpy(diag,"\0");
         if (size_data[0].qpercent >0 )
-            k = (unsigned long)((size_data[i].qpercent/(float)(size_data[0].qpercent))*30);
+            k = ((float)(size_data[i].qpercent/(float)(size_data[0].qpercent))*30);
         else k = 0;
         for (j = 0;j < k ;j++) strcat(diag,"м");
         for (j=0; j<32; j++) name[j] = '\0';
         strncpy(name,size_data[i].name,30);
 
-        fprintf(current_std,"Г%4ld.Г %-31sГ%6.2lfГ%-30sГ\n",i+1,name,size_data[i].qpercent,diag);
+        fprintf(current_std,"Г%4li.Г %-31sГ%6.2fГ%-30sГ\n",i+1,name,size_data[i].qpercent,diag);
 
     } /* for */
 
@@ -1019,7 +1030,7 @@ int print_statistics_by_date()
     for (i = 0; i < dd_count; i++)
     {
         strcpy(diag,"\0");
-        k = (unsigned long)((date_data[i].count/(float)(maxcount))*59);
+        k = ((float)(date_data[i].count/(float)(maxcount))*59);
         if (k <= 0) strcpy(diag,"к"); else
             for (j = 0;j < k ;j++) strcat(diag,"м");
 
@@ -1061,7 +1072,7 @@ int print_statistics_by_wdays()
     for (i = 0; i <= 6; i++)
     {
         strcpy(diag,"\0");
-        k = (unsigned long)((counts[i]/(float)(maxcount))*60);
+        k = ((float)(counts[i]/(float)(maxcount))*60);
         for (j = 0;j < k ;j++) strcat(diag,"м");
 
         fprintf(current_std," %s %6ldГ%-60s\n",weekday_ab[i],counts[i],diag);
@@ -1121,7 +1132,7 @@ int print_statistics_by_time()
 
         for (i = 0; i <= 23; i++)
         {
-            k = (unsigned long)((counts[i]/(float)(maxcount))*20);
+            k = ((float)(counts[i]/(float)(maxcount))*20);
 
             if (k >= j) strcat(diag,"ол "); else
 
@@ -1198,7 +1209,6 @@ s_config *read_cfg(char *cfg_name)
     config->pkt_subj = NULL;
     config->pkt_origin = NULL;
     config->pkt_inbound = NULL;
-    config->pkt_tearline = NULL;
 
     buff = malloc(BUFSIZE+1);
 
@@ -1468,24 +1478,6 @@ s_config *read_cfg(char *cfg_name)
             continue;
         }
 
-        if (!stricmp(s0,"Pkt_Tearline"))
-        {
-          s1 = strtok(NULL,"\0");
-          if (s1 == NULL) print_err(buff,i);
-          while(*s1 && (*s1 == ' ' || *s1 == '\t')) s1++;
-          j = strlen(s1)-1;
-          while(j && (s1[j] == ' ' || s1[j] == '\t'))
-          {
-            s1[j] = '\0'; j--;
-          }
-          if (!*s1) print_err(buff,i);
-
-          config->pkt_tearline = smalloc(strlen(s1)+1);
-          strcpy(config->pkt_tearline,s1);
-
-          continue;
-        }
-
         if (!stricmp(s0,"Pkt_Origin"))
         {
             s1 = strtok(NULL,"\0");
@@ -1605,7 +1597,6 @@ void free_config()
     nfree(main_config->pkt_subj);
     nfree(main_config->pkt_origin);
     nfree(main_config->pkt_inbound);
-    nfree(main_config->pkt_tearline);
 
     for (i = 0; i < main_config->areas_count; i++)
     {
@@ -1638,7 +1629,7 @@ int open_pkt()
 
     global_msgid++;
 
-    sprintf(packet_name,"%s%08lx.pkt",main_config->pkt_inbound,(long)global_msgid);
+    sprintf(packet_name,"%s%08lx.pkt",main_config->pkt_inbound,global_msgid);
 
     if ((out_pkt = fopen(packet_name,"wb")) == NULL)
     {
@@ -1719,7 +1710,7 @@ int write_msg_hdr(int n)
 
     }
 
-    sprintf(mh.DateTime,"%02d %s %s  %02d:%02d:%02d",t.tm_mday,
+    sprintf((char*)mh.DateTime,"%02d %s %s  %02d:%02d:%02d",t.tm_mday,
             months_ab[t.tm_mon],yr,t.tm_hour,t.tm_min,isecs);
 
     isecs++;
@@ -1755,27 +1746,20 @@ int write_msg_hdr(int n)
         sprintf(s,"\r\x01MSGID: %d:%d/%d.%d %08lx",
                 main_config->pkt_orig_addr.zone,main_config->pkt_orig_addr.net,
                 main_config->pkt_orig_addr.node,main_config->pkt_orig_addr.point,
-                (long)global_msgid);
+                global_msgid);
 
     } else {
 
         sprintf(s,"\r\x01MSGID: %d:%d/%d %08lx",
                 main_config->pkt_orig_addr.zone,main_config->pkt_orig_addr.net,
-                main_config->pkt_orig_addr.node,(long)global_msgid);
+                main_config->pkt_orig_addr.node,global_msgid);
 
     }
 
     fwrite(s,strlen(s),1,out_pkt);
     if (ferror(out_pkt)) print_write_err();
 
-    fwrite("\r\x01""FLAGS NPD\r",12,1,out_pkt);
-
-    if (strnicmp(main_config->pkt_tearline, versionStr, strlen(versionStr)))
-    {
-    sprintf(s,"\x01PID: %s\r",versionStr);
-    fwrite(s,strlen(s),1,out_pkt);
-    }
-
+    sprintf(s,"\r\x01PID: %s\r",versionStr);
 
     fwrite(s,strlen(s),1,out_pkt);
     if (ferror(out_pkt)) print_write_err();
@@ -1803,7 +1787,7 @@ int end_msg(unsigned char e)
         if (ferror(out_pkt)) print_write_err();
     }
 
-    sprintf(s,"\r\r--- %s",main_config->pkt_tearline);
+    sprintf(s,"\r\r--- %s",versionStr);
 
     fwrite (s, strlen(s), 1, out_pkt);
     if (ferror(out_pkt)) print_write_err();
@@ -1870,23 +1854,16 @@ int main(int argc,char *argv[])
 
     main_config = read_cfg(argv[1]);
 
-    if (main_config->pkt_from == NULL) main_config->pkt_from = sstrdup(versionStr);
+    if (main_config->pkt_from == NULL) main_config->pkt_from = strdup(versionStr);
     if (main_config->pkt_to == NULL) main_config->pkt_to = strdup("All");
     if (main_config->pkt_subj == NULL) main_config->pkt_subj = strdup("Statistics");
     if (main_config->pkt_origin == NULL) main_config->pkt_origin = strdup("\0");
     if (main_config->pkt_inbound == NULL) main_config->pkt_inbound = strdup("\0");
-    if (main_config->pkt_tearline == NULL) main_config->pkt_tearline = sstrdup(versionStr);
 
     if (strlen(main_config->pkt_inbound) > 256)
     {
         fprintf(stderr,"Inbound path too long\n\n");
         exit(2);
-    }
-
-    if (strlen(main_config->pkt_tearline) > 75)
-    {
-      fprintf(stderr,"Tearline too long\n\n");
-      exit(2);
     }
 
     if (strlen(main_config->pkt_origin) > 50)

@@ -10,25 +10,24 @@
 # LIBSUFFIX  library filename suffix (compiler ID, three characters, somewhere empty)
 # DLLPREFIX  dinamic linking library prefix (usually empty)
 # DLLSUFFIX  dinamic linking library suffix (compiler ID or empty)
-# O, B, L, H prefixes to use with names of objects, binaries, libraries and headers respectively
+# _SRC_DIR  sources dir
 
-# Module name
 LIBNAME = areastat
+
+# Object files (please sort list to easy check by human)
+OBJS	= areastat$(_OBJ)
+
+# Header files
+HEADERS	= cvsdate.h areastat.h version.h
 
 # Sources directory
 _SRC_DIR= ../src/
+
 # Headers directory
 H_DIR	= ../h/
 
-# Header files
-HEADERS	= $(H)cvsdate.h $(H)areastat.h $(H)version.h
-
-# Object files (please sort list to easy check by human)
-OBJS	= $(O)areastat$(_OBJ)
-
-
 # Binary file(s) to build from sources
-PROGRAMS= $(B)$(LIBNAME)$(_EXE)
+PROGRAMS= $(LIBNAME)$(_EXE)
 
 # List of libraries required to build binary file(s)
 LIBS	=

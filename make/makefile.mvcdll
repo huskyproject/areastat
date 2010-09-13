@@ -1,6 +1,6 @@
 # $Id$
 #
-# Microsoft Visual C++ Makefile for build static program(s)
+# Microsoft Visual C++ Makefile for build dinamic program(s)
 # No support for the Husky build environment.
 #
 # Tested on MS Visual C 6.0
@@ -23,14 +23,16 @@ _DLL	  = .dll
 _EXE	  = .exe
 
 ## programs ##
-CFLAGS	= -nologo -Zp1
-CINCL	= -I$(H_DIR) -I..\..
-CDEFS	= -D__NT__ -DNT -DWINNT -DWIN32 -D_CONSOLE
+CFLAGS	= -nologo -MD -Zp1
+CINCL   = -I$(H_DIR) -I..\..
+CDEFS	= -D__NT__ -DNT -DWINNT -DWIN32 -D_CONSOLE -D_MAKE_DLL
 COPT	= -Ob2
 
+EXEFLAGS= /link /opt:nowin98
 EXENAMEFLAG = -Fe
 
-LIBS	= ..\..\smapi\smapimvc.lib ..\..\fidoconf\fconfmvc.lib
+LIBS	= ..\..\smapi\smapimvc.lib ..\..\fidoconf\fconfmvc.lib \
+	  USER32.LIB msvcrt.lib Kernel32.lib
 
 default: all
 
@@ -42,7 +44,7 @@ programs: $(PROGRAMS)
 
 $(PROGRAMS): $(OBJS)
 	@echo Create $(PROGRAMS)...
-	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $** $(LIBS)
+	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $**  $(LIBS) $(EXEFLAGS)
 
 man:
 
