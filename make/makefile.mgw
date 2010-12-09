@@ -1,0 +1,34 @@
+# $Id$
+# Makefile to build AREASTAT/MinGW
+# No support for the Husky build environment.
+
+## include common makefiles part ##
+include ../../huskybse/huskymak.mgw
+include makefile.inc
+
+# includes directories
+CINCL += -I$(H_DIR) -I../../huskylib -I../../smapi
+
+# libraries need to build binary file
+LIBS	= ../../smapi/make/$(LIBPREFIX)smapi$(LIBSUFFIX)$(_LIB) \
+	  ../../huskylib/make/$(LIBPREFIX)husky$(LIBSUFFIX)$(_LIB)
+
+READMEFILES= ../ChangeLog ../VERSION ../HISTORY
+
+default:
+	@echo
+	@echo Run \'make programs\' to build static version of programs \($(PROGRAMS)\)
+	@echo
+	@echo Run \'make all\' to build all above
+
+all:	programs
+
+programs: $(PROGRAMS)
+
+%$(_OBJ): $(_SRC_DIR)%$(_C)
+	@echo Compiling $<
+	@$(CC) $(CFLAGS) $(CDEFS) $(CINCL) $(OBJOPT) $<
+
+$(PROGRAMS): $(OBJS)
+	@echo Create $(PROGRAMS)
+	@$(CC) $(CFLAGS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
