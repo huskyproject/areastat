@@ -2,11 +2,15 @@
 #
 # Microsoft Visual C++ Makefile for build areastat
 
+MAKEFILE_MVC = makefile.mvc
+MAKEFILE_HUSKYMAK = ../../huskybse/huskymak.cfg.mvc
+MAKEFILE_INC = makefile.inc
 
 ## include common makefiles part ##
-!include makefile.inc
-!include ../../huskymak.cfg
+!include $(MAKEFILE_INC)
+!include $(MAKEFILE_HUSKYMAK)
 
+MAKEFILES = $(MAKEFILE_MVC) $(MAKEFILE_HUSKYMAK) $(MAKEFILE_INC)
 
 ## program options ##
 
@@ -31,12 +35,15 @@ LIBSL	= $(LIBS) \
 	  $(LIBPREFIX)smapi$(LIBSUFFIX)$(_LIB)
 !endif
 
-default: all
+default:
+	@echo Specify a parameter DYNLIBS=1 in the command line to build with dynamic version
+	@echo of the library
+	@echo Run 'make all' or 'make programs' to build programs ($(PROGRAMS))"
 
 all: programs
-programs: $(PROGRAMS)
+programs: $(PROGRAMS) $(MAKEFILES)
 
-$(OBJS) $(PRGOBJS) : $(HEADERS) makefile.mvc ../../huskymak.cfg makefile.inc
+$(OBJS) $(PRGOBJS) : $(HEADERS) $(MAKEFILES)
 
 {$(_SRC_DIR)}$(_C){$(O)}$(_OBJ)::
 	@$(CC) $(CFLAGS) $(OBJOPT) $(OBJNAMEOPT)$(O) @<<
