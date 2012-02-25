@@ -2,6 +2,8 @@
 #
 # Generic Makefile for areastat (estt by Dmitry Rusov)
 
+.PHONY=docs html info mans clean distclean uninstall all install
+
 ifeq ($(DEBIAN), 1)
 # Every Debian-Source-Paket has one included.
 include /usr/share/husky/huskymak.cfg
@@ -32,7 +34,7 @@ CDEFS=-D$(OSTYPE) -DUNAME=\"$(UNAME)\" $(ADDCDEFS)
 SRC_DIR=src/
 
 OBJS= areastat.o
-MANS= man/areastat.1 man/areastat.cfg.5
+MANS= man/areastat.1 man/areastat.conf.5
 
 areastat: $(OBJS)
 		$(CC) $(OBJS) $(LFLAGS) $(LIBS) -o areastat
@@ -49,10 +51,9 @@ html:
 
 docs: #info html
 
-FORCE:
 
-man: $(MANS)
-	for m in $(MANS); do gzip -9c $$m > $$m.gz ; done
+mans: $(MANS)
+	-for m in $(MANS); do echo Create $$m.gz; gzip -9c $$m > $$m.gz ; done
 
 clean:
 		rm -f *.o *~ src/*.o src/*~
