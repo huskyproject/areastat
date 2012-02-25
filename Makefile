@@ -2,7 +2,7 @@
 #
 # Generic Makefile for areastat (estt by Dmitry Rusov)
 
-.PHONY=docs html info mans clean distclean uninstall all install
+.PHONY: docs html info mans clean distclean uninstall all install
 
 ifeq ($(DEBIAN), 1)
 # Every Debian-Source-Paket has one included.
@@ -52,8 +52,10 @@ html:
 docs: #info html
 
 
-mans: $(MANS)
-	-for m in $(MANS); do echo Create $$m.gz; gzip -9c $$m > $$m.gz ; done
+man: $(foreach m,$(MANS),$(m).gz)
+
+%.gz: %
+	gzip -9c $< > $@
 
 clean:
 		rm -f *.o *~ src/*.o src/*~
