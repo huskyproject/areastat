@@ -1769,16 +1769,14 @@ int write_msg_hdr(int n)
     if (ferror(out_pkt)) print_write_err();
 
     fwrite("\r\x01""FLAGS NPD\r",12,1,out_pkt);
+    if (ferror(out_pkt)) print_write_err();
 
     if (strnicmp(main_config->pkt_tearline, versionStr, strlen(versionStr)))
     {
-    sprintf(s,"\x01PID: %s\r",versionStr);
-    fwrite(s,strlen(s),1,out_pkt);
+        sprintf(s,"\x01PID: %s\r",versionStr);
+        fwrite(s,strlen(s),1,out_pkt);
+        if (ferror(out_pkt)) print_write_err();
     }
-
-
-    fwrite(s,strlen(s),1,out_pkt);
-    if (ferror(out_pkt)) print_write_err();
 
     return 0;
 }
