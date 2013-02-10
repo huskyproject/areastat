@@ -317,7 +317,7 @@ unsigned long get_time_from_stamp (struct _stamp mtime)
     unsigned long nDaysSince1970;
     unsigned long nYearsSince1970;
 
-    hour = mtime.time.hh + 16;
+    hour = mtime.time.hh;
     min  = mtime.time.mm;
     sec  = mtime.time.ss * 2;
     day  = mtime.date.da;
@@ -440,11 +440,6 @@ int reading_base(unsigned long ii)
 
         mtime = get_time_from_stamp(msg.date_written);
 
-#ifndef __MVC__
-
-        mtime += 43200;
-
-#endif
         period = atime - mtime;
         tmp_tm = *localtime (&mtime);
         tmp_tm.tm_mon++;
