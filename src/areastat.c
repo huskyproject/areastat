@@ -307,7 +307,7 @@ unsigned long get_time_from_stamp (struct _stamp mtime)
     unsigned long nDaysSince1970;
     unsigned long nYearsSince1970;
 
-    hour = mtime.time.hh + 16;
+    hour = mtime.time.hh;
     min  = mtime.time.mm;
     sec  = mtime.time.ss * 2;
     day  = mtime.date.da;
@@ -423,32 +423,16 @@ int reading_base(unsigned long ii)
                 break;
         } /* for */
 
-
-/*        printf("qsize=%d\n",qsize); */
-
         in_msg = ptr;
         MsgCloseMsg(in_msg);
 
         mtime = get_time_from_stamp(msg.date_written);
-
-#ifndef __MVC__
-
-        mtime += 43200;
-
-#endif
         period = atime - mtime;
+        if (!period || period > main_config->days_of_stat * secs_in_day) continue;
         tmp_tm = *localtime (&mtime);
         tmp_tm.tm_mon++;
-        //printf("%02d-%02d-%04d,",tmp_tm.tm_mday,tmp_tm.tm_mon,tmp_tm.tm_year+1900);
-        //printf("%02d:%02d:%02d.",tmp_tm.tm_hour,tmp_tm.tm_hour,tmp_tm.tm_min,tmp_tm.tm_sec);
-#if 0
-        printf("\nmessage time: %s",ctime(&mtime));
-        printf("message time: %02d-%02d-%04d  %02d:%02d:%02d\n",tmp_tm.tm_mday,
-               tmp_tm.tm_mon,tmp_tm.tm_year+1900,tmp_tm.tm_hour,
-               tmp_tm.tm_min,tmp_tm.tm_sec);
-#endif
-        if (!period || period > main_config->days_of_stat * secs_in_day) continue;
         messages++;
+
         // by name
         nf = 0; nt = 0;
         for (i=0; i<gd_count; i++)
