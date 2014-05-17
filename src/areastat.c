@@ -154,32 +154,6 @@ static int aDaysFromJan1st[13] = {
 
 static int days_in_months[12] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
 
-#ifndef _MAKE_DLL
-
-void *smalloc(size_t size)
-{
-    void *ptr = malloc(size);
-    if (ptr == NULL)
-    {
-        fprintf(stderr, "\n\nOut of memory\n\n");
-        exit(2);
-    }
-    return ptr;
-}
-
-void *srealloc(void *ptr, size_t size)
-{
-    void *newptr = realloc(ptr, size);
-    if (newptr == NULL)
-    {
-        fprintf(stderr, "\n\nOut of memory\n\n");
-        exit(2);
-    }
-    return newptr;
-}
-
-#endif
-
 int name_comparer(const void *str1, const void *str2)
 {
     return strcmp(((ps_unsorted_item)str1)->name,((ps_unsorted_item)str2)->name);
