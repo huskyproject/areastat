@@ -17,5 +17,4 @@ build_script:
       cd C:\projects\huskylib && mkdir build && cd build && cmake --version &&  cmake .. -G "%GENERATOR%" && cmake --build . -- /P:Configuration=Release &&
       cd C:\projects\smapi && mkdir build && cd build && cmake --version &&  cmake .. -G "%GENERATOR%" && cmake --build . -- /P:Configuration=Release &&
       cd C:\projects\fidoconf && mkdir build && cd build && cmake --version &&  cmake .. -G "%GENERATOR%" && cmake --build . -- /P:Configuration=Release &&
-      cd C:\projects\hptzip && mkdir build && cd build && cmake --version &&  cmake .. -G "%GENERATOR%" && cmake --build . -- /P:Configuration=Release &&
       cd C:\projects\areastat && mkdir build && cd build && cmake --version &&  cmake .. -G "%GENERATOR%" && cmake --build . -- /P:Configuration=Release
