@@ -19,7 +19,7 @@ install:
   - cmd: git clone https://github.com/huskyproject/huskylib  C:\projects\huskylib
   - cmd: git clone https://github.com/huskyproject/smapi  C:\projects\smapi
   - cmd: git clone https://github.com/huskyproject/fidoconf  C:\projects\fidoconf
-  - if ["%CF%"]==[-DBUILD_SHARED_LIBS=OFF] (cpack)
+  - if ["%CF%"]==["-DBUILD_SHARED_LIBS=OFF"] (cpack)
 build_script:
   - cmd: 
       cd C:\projects\huskylib && mkdir build && cd build && cmake --version &&  cmake .. -G "%GENERATOR%" "%CF%" && cmake --build . -- /P:Configuration=Release &&
