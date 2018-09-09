@@ -1,7 +1,7 @@
 # AreaStat
 [![Build Status](https://travis-ci.org/huskyproject/areastat.svg?branch=master)](https://travis-ci.org/huskyproject/areastat)
 [![Build status](https://ci.appveyor.com/api/projects/status/9pq58llqhw5ijh46/branch/master?svg=true)](https://ci.appveyor.com/project/dukelsky/areastat/branch/master)
-
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/18d9bd4220e6491096a040c9cd810508)](https://www.codacy.com/app/huskyproject/areastat?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=huskyproject/areastat&amp;utm_campaign=Badge_Grade)
 
 ## 1. Introduction.
 
