@@ -677,7 +677,7 @@ int print_statistics_by_name()
 
     for (i=0; i<gd_count; i++)
     {
-        fprintf(current_std,"³%4lu.³ %-41s³%6ld³%6ld³%7ld³\n",i+1,global_data[i].name,
+        fprintf(current_std,"³%4lu.³ %-41s³%6lu³%6ld³%7ld³\n",i+1,global_data[i].name,
                 global_data[i].from,global_data[i].to,global_data[i].from+global_data[i].to);
         tot_from += global_data[i].from;
         tot_to += global_data[i].to;
@@ -719,7 +719,7 @@ int print_statistics_by_from()
         for (j=0; j<32; j++) name[j] = '\0';
         strncpy(name,from_data[i].name,30);
 
-        fprintf(current_std,"³%4lu.³ %-31s³%6ld³%-30s³\n",i+1,name,from_data[i].count,diag);
+        fprintf(current_std,"³%4lu.³ %-31s³%6lu³%-30s³\n",i+1,name,from_data[i].count,diag);
 
     } /* for */
 
@@ -754,7 +754,7 @@ int print_statistics_by_to()
         for (j=0; j<32; j++) name[j] = '\0';
         strncpy(name,to_data[i].name,30);
 
-        fprintf(current_std,"³%4lu.³ %-31s³%6ld³%-30s³\n",i+1,name,to_data[i].count,diag);
+        fprintf(current_std,"³%4lu.³ %-31s³%6lu³%-30s³\n",i+1,name,to_data[i].count,diag);
 
     } /* for */
 
@@ -778,7 +778,7 @@ int print_statistics_by_from_to()
 
     for (i=0; i < ftd_count; i++)
     {
-        unsigned long i, j, k, l, n;
+        unsigned long j, k, l, n;
 
         if (i >= main_config->by_from_to) break;
 
@@ -812,7 +812,7 @@ int print_statistics_by_from_to()
 
         name2[l] = '\0';
 
-        fprintf(current_std,"³%4lu.³ %-21s³ %-22s³%6ld³%-16s³\n",i+1,name1,name2,from_to_data[i].count,diag);
+        fprintf(current_std,"³%4lu.³ %-21s³ %-22s³%6lu³%-16s³\n",i+1,name1,name2,from_to_data[i].count,diag);
 
     } /* for */
 
@@ -856,7 +856,7 @@ int print_statistics_by_total()
         for (j=0; j<32; j++) name[j] = '\0';
         strncpy(name,total_data[i].name,30);
 
-        fprintf(current_std,"³%4lu.³ %-31s³%6ld³%-30s³\n",i+1,name,total_data[i].count,diag);
+        fprintf(current_std,"³%4lu.³ %-31s³%6lu³%-30s³\n",i+1,name,total_data[i].count,diag);
 
     } /* for */
 
@@ -890,7 +890,7 @@ int print_statistics_by_size()
         for (j=0; j<32; j++) name[j] = '\0';
         strncpy(name,size_data[i].name,24);
 
-        fprintf(current_std,"³%4lu.³ %-25s³%7ld³%7ld³%-27s³\n",i+1,name,size_data[i].size,size_data[i].qsize,diag);
+        fprintf(current_std,"³%4lu.³ %-25s³%7lu³%7ld³%-27s³\n",i+1,name,size_data[i].size,size_data[i].qsize,diag);
 
     } /* for */
 
@@ -961,7 +961,7 @@ int print_statistics_by_subj()
         for (j = 0; j < 56; j++) name[j] = '\0';
         for (j = 0; j < 55 && j < l; j++) name[j] = subj_data[i].name[j];
 
-        fprintf(current_std,"³%4lu.³ %-56s³%6ld³\n",i+1,name,subj_data[i].count);
+        fprintf(current_std,"³%4lu.³ %-56s³%6lu³\n",i+1,name,subj_data[i].count);
 
     } /* for */
 
@@ -983,12 +983,19 @@ int print_statistics_by_date()
 
     for (i = 0; i < dd_count; i++)
     {
-        unsigned long j, k;
+        unsigned long k;
 
         strcpy(diag,"\0");
         k = (unsigned long)((date_data[i].count/(float)(maxcount))*59);
-        if (k == 0) strcpy(diag,"Ú"); else
-            for (j = 0;j < k ;j++) strcat(diag,"Ü");
+        if (k == 0)
+            strcpy(diag,"Ú");
+        else
+        {
+            unsigned long j;
+
+            for (j = 0; j < k; j++)
+                strcat(diag,"Ü");
+        }
 
         fprintf(current_std," %02d-%02d-%04d %4lu ³%-59s\n",date_data[i].tm_date.tm_mday,
                 date_data[i].tm_date.tm_mon,date_data[i].tm_date.tm_year+1900,date_data[i].count,diag);
