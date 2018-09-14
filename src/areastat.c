@@ -677,7 +677,7 @@ int print_statistics_by_name()
 
     for (i=0; i<gd_count; i++)
     {
-        fprintf(current_std,"³%4lu.³ %-41s³%6lu³%6ld³%7ld³\n",i+1,global_data[i].name,
+        fprintf(current_std,"³%4lu.³ %-41s³%6lu³%6lu³%7lu³\n",i+1,global_data[i].name,u
                 global_data[i].from,global_data[i].to,global_data[i].from+global_data[i].to);
         tot_from += global_data[i].from;
         tot_to += global_data[i].to;
@@ -778,14 +778,21 @@ int print_statistics_by_from_to()
 
     for (i=0; i < ftd_count; i++)
     {
-        unsigned long j, k, l, n;
+        unsigned long k, l, n;
 
         if (i >= main_config->by_from_to) break;
 
         strcpy(diag,"\0");
         k = (unsigned long)((from_to_data[i].count/(float)(from_to_data[0].count))*16);
-        if (k == 0) strcpy(diag,"Ú"); else
-            for (j = 0;j < k ;j++) strcat(diag,"Ü");
+        if (k == 0)
+            strcpy(diag,"Ú");
+        else
+        {
+            unsigned long j;
+
+            for (j = 0; j < k; j++)
+                strcat(diag,"Ü");
+        }
 
         n = 0;
 
