@@ -4,7 +4,7 @@
  *                                                                         *
  *  AreaStat                                                               *
  *  Copyleft (c) 2004-2010 by The Husky project                            *
- *  Homepage: http://husky.sourceforge.net                                 *
+ *  Homepage: https://github.com/huskyproject/areastat/wiki                *
  *                                                                         *
  *  EchoStat Source, Version 1.06                                          *
  *  Copyright (c) 2000 by Dmitry Rusov. (2:5090/94, rusov94@mail.ru)       *
@@ -357,7 +357,7 @@ int reading_base(unsigned long ii)
     {
         if ((msgn % 5)==0)
         {
-            fprintf(stderr,"Scanning msg: %ld\r",msgn);
+            fprintf(stderr,"Scanning msg: %lu\r",msgn);
             fflush(stdout);
         }
         if ((in_msg=MsgOpenMsg(in_area,MOPEN_READ,msgn))==NULL) continue;
@@ -655,11 +655,11 @@ int print_summary_statistics(unsigned long i)
             weekday_ab[fd.tm_wday],fd.tm_mday,months_ab[fd.tm_mon-1],fd.tm_year+1900,
             weekday_ab[ld.tm_wday],ld.tm_mday,months_ab[ld.tm_mon-1],ld.tm_year+1900);
 
-    fprintf(current_std,"  Messages: %ld\n",messages);
-    fprintf(current_std,"  Total users: %ld\n",gd_count);
-    fprintf(current_std,"  Active users: %ld\n",fd_count);
-    fprintf(current_std,"  Days: %ld\n",days);
-    fprintf(current_std,"  Msgs per day: %ld\n",(unsigned long)messages/days);
+    fprintf(current_std,"  Messages: %lu\n",messages);
+    fprintf(current_std,"  Total users: %lu\n",gd_count);
+    fprintf(current_std,"  Active users: %lu\n",fd_count);
+    fprintf(current_std,"  Days: %lu\n",days);
+    fprintf(current_std,"  Msgs per day: %lu\n",(unsigned long)messages/days);
 
     return 0;
 }
@@ -677,7 +677,7 @@ int print_statistics_by_name()
 
     for (i=0; i<gd_count; i++)
     {
-        fprintf(current_std,"³%4ld.³ %-41s³%6ld³%6ld³%7ld³\n",i+1,global_data[i].name,
+        fprintf(current_std,"³%4lu.³ %-41s³%6lu³%6lu³%7lu³\n",i+1,global_data[i].name,
                 global_data[i].from,global_data[i].to,global_data[i].from+global_data[i].to);
         tot_from += global_data[i].from;
         tot_to += global_data[i].to;
@@ -686,7 +686,7 @@ int print_statistics_by_name()
 
     tot_tot = tot_from+tot_to;
     fprintf(current_std,"ÃÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÅÄÄÄÄÄÄÅÄÄÄÄÄÄÄ´\n");
-    fprintf(current_std,"³     ³                                          ³%6ld³%6ld³%7ld³\n",tot_from,tot_to,tot_tot);
+    fprintf(current_std,"³     ³                                          ³%6lu³%6lu³%7lu³\n",tot_from,tot_to,tot_tot);
     fprintf(current_std,"ÀÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÙ\n");
 
     return 0;
@@ -694,13 +694,13 @@ int print_statistics_by_name()
 
 int print_statistics_by_from()
 {
-    unsigned long i,j,k;
+    unsigned long i;
     char diag[80],name[32];
 
     qsort (from_data, fd_count, sizeof(s_named_item), ftc_comparer);
     do_sort_gap(fd_count,from_data);
 
-    fprintf(current_std,"\n --- Sorted by From. Top %ld\n",main_config->by_from);
+    fprintf(current_std,"\n --- Sorted by From. Top %lu\n",main_config->by_from);
 
     fprintf(current_std,"ÚÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿\n");
     fprintf(current_std,"³ No. ³ Name                           ³ From ³                              ³\n");
@@ -708,17 +708,18 @@ int print_statistics_by_from()
 
     for (i=0; i < fd_count; i++)
     {
+        unsigned long j, k;
 
         if (i >= main_config->by_from) break;
 
         strcpy(diag,"\0");
         k = (unsigned long)((from_data[i].count/(float)(from_data[0].count))*30);
-        if (k <= 0) strcpy(diag,"Ú"); else
+        if (k == 0) strcpy(diag,"Ú"); else
             for (j = 0;j < k ;j++) strcat(diag,"Ü");
         for (j=0; j<32; j++) name[j] = '\0';
         strncpy(name,from_data[i].name,30);
 
-        fprintf(current_std,"³%4ld.³ %-31s³%6ld³%-30s³\n",i+1,name,from_data[i].count,diag);
+        fprintf(current_std,"³%4lu.³ %-31s³%6lu³%-30s³\n",i+1,name,from_data[i].count,diag);
 
     } /* for */
 
@@ -729,30 +730,31 @@ int print_statistics_by_from()
 
 int print_statistics_by_to()
 {
-    unsigned long i,j,k;
+    unsigned long i;
     char diag[80],name[32];
 
     qsort (to_data, td_count, sizeof(s_named_item), ftc_comparer);
     do_sort_gap(td_count,to_data);
 
-    fprintf(current_std,"\n --- Sorted by To. Top %ld\n",main_config->by_to);
+    fprintf(current_std,"\n --- Sorted by To. Top %lu\n",main_config->by_to);
     fprintf(current_std,"ÚÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿\n");
     fprintf(current_std,"³ No. ³ Name                           ³  To  ³                              ³\n");
     fprintf(current_std,"ÃÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´\n");
 
     for (i=0; i < td_count; i++)
     {
+        unsigned long j, k;
 
         if (i >= main_config->by_to) break;
 
         strcpy(diag,"\0");
         k = (unsigned long)((to_data[i].count/(float)(to_data[0].count))*30);
-        if (k <= 0) strcpy(diag,"Ú"); else
+        if (k == 0) strcpy(diag,"Ú"); else
             for (j = 0;j < k ;j++) strcat(diag,"Ü");
         for (j=0; j<32; j++) name[j] = '\0';
         strncpy(name,to_data[i].name,30);
 
-        fprintf(current_std,"³%4ld.³ %-31s³%6ld³%-30s³\n",i+1,name,to_data[i].count,diag);
+        fprintf(current_std,"³%4lu.³ %-31s³%6lu³%-30s³\n",i+1,name,to_data[i].count,diag);
 
     } /* for */
 
@@ -763,26 +765,34 @@ int print_statistics_by_to()
 
 int print_statistics_by_from_to()
 {
-    unsigned long i,j,k,l,n;
+    unsigned long i;
     char diag[80],name1[32],name2[32];
 
     qsort (from_to_data, ftd_count, sizeof(s_named_item), ftc_comparer);
     do_sort_gap(ftd_count,from_to_data);
 
-    fprintf(current_std,"\n --- Sorted by From -> To. Top %ld\n",main_config->by_from_to);
+    fprintf(current_std,"\n --- Sorted by From -> To. Top %lu\n",main_config->by_from_to);
     fprintf(current_std,"ÚÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿\n");
     fprintf(current_std,"³ No. ³ From                 ³ To                    ³ Msgs ³                ³\n");
     fprintf(current_std,"ÃÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´\n");
 
     for (i=0; i < ftd_count; i++)
     {
+        unsigned long k, l, n;
 
         if (i >= main_config->by_from_to) break;
 
         strcpy(diag,"\0");
         k = (unsigned long)((from_to_data[i].count/(float)(from_to_data[0].count))*16);
-        if (k <= 0) strcpy(diag,"Ú"); else
-            for (j = 0;j < k ;j++) strcat(diag,"Ü");
+        if (k == 0)
+            strcpy(diag,"Ú");
+        else
+        {
+            unsigned long j;
+
+            for (j = 0; j < k; j++)
+                strcat(diag,"Ü");
+        }
 
         n = 0;
 
@@ -809,7 +819,7 @@ int print_statistics_by_from_to()
 
         name2[l] = '\0';
 
-        fprintf(current_std,"³%4ld.³ %-21s³ %-22s³%6ld³%-16s³\n",i+1,name1,name2,from_to_data[i].count,diag);
+        fprintf(current_std,"³%4lu.³ %-21s³ %-22s³%6lu³%-16s³\n",i+1,name1,name2,from_to_data[i].count,diag);
 
     } /* for */
 
@@ -820,7 +830,7 @@ int print_statistics_by_from_to()
 
 int print_statistics_by_total()
 {
-    unsigned long i,j,k;
+    unsigned long i;
     char diag[80],name[32];
 
     for (i = 0; i < gd_count; i++)
@@ -835,24 +845,25 @@ int print_statistics_by_total()
     qsort (total_data, ttd_count, sizeof(s_named_item), ftc_comparer);
     do_sort_gap(ttd_count,total_data);
 
-    fprintf(current_std,"\n --- Sorted by Total. Top %ld\n",main_config->by_total);
+    fprintf(current_std,"\n --- Sorted by Total. Top %lu\n",main_config->by_total);
     fprintf(current_std,"ÚÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿\n");
     fprintf(current_std,"³ No. ³ Name                           ³ Msgs ³                              ³\n");
     fprintf(current_std,"ÃÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´\n");
 
     for (i=0; i < ttd_count; i++)
     {
+        unsigned long k, j;
 
         if (i >= main_config->by_total) break;
 
         strcpy(diag,"\0");
         k = (unsigned long)((total_data[i].count/(float)(total_data[0].count))*30);
-        if (k <= 0) strcpy(diag,"Ú"); else
+        if (k == 0) strcpy(diag,"Ú"); else
             for (j = 0;j < k ;j++) strcat(diag,"Ü");
         for (j=0; j<32; j++) name[j] = '\0';
         strncpy(name,total_data[i].name,30);
 
-        fprintf(current_std,"³%4ld.³ %-31s³%6ld³%-30s³\n",i+1,name,total_data[i].count,diag);
+        fprintf(current_std,"³%4lu.³ %-31s³%6lu³%-30s³\n",i+1,name,total_data[i].count,diag);
 
     } /* for */
 
@@ -863,29 +874,30 @@ int print_statistics_by_total()
 
 int print_statistics_by_size()
 {
-    unsigned long i,j,k;
+    unsigned long i,j;
     char diag[80],name[32];
 
     qsort (size_data, szd_count, sizeof(s_size_item), size_comparer);
 
-    fprintf(current_std,"\n --- Sorted by Size. Top %ld\n",main_config->by_size);
+    fprintf(current_std,"\n --- Sorted by Size. Top %lu\n",main_config->by_size);
     fprintf(current_std,"ÚÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿\n");
     fprintf(current_std,"³ No. ³ Name                     ³ Size  ³ Quote ³                           ³\n");
     fprintf(current_std,"ÃÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´\n");
 
     for (i=0; i < szd_count; i++)
     {
+        unsigned long k;
 
         if (i >= main_config->by_size) break;
 
         strcpy(diag,"\0");
         k = (unsigned long)((size_data[i].size/(float)(size_data[0].size))*27);
-        if (k <= 0) strcpy(diag,"Ú"); else
+        if (k == 0) strcpy(diag,"Ú"); else
             for (j = 0;j < k ;j++) strcat(diag,"Ü");
         for (j=0; j<32; j++) name[j] = '\0';
         strncpy(name,size_data[i].name,24);
 
-        fprintf(current_std,"³%4ld.³ %-25s³%7ld³%7ld³%-27s³\n",i+1,name,size_data[i].size,size_data[i].qsize,diag);
+        fprintf(current_std,"³%4lu.³ %-25s³%7lu³%7lu³%-27s³\n",i+1,name,size_data[i].size,size_data[i].qsize,diag);
 
     } /* for */
 
@@ -897,20 +909,21 @@ int print_statistics_by_size()
 
 int print_statistics_by_qpercent()
 {
-    unsigned long i,j,k;
+    unsigned long i;
     char diag[80],name[32];
 
     for (i = 0; i < szd_count; i++)
         size_data[i].qpercent = ((float)size_data[i].qsize/size_data[i].size)*100;
     qsort (size_data, szd_count, sizeof(s_size_item), qp_comparer);
 
-    fprintf(current_std,"\n --- Sorted by QPercent. Top %ld\n",main_config->by_qpercent);
+    fprintf(current_std,"\n --- Sorted by QPercent. Top %lu\n",main_config->by_qpercent);
     fprintf(current_std,"ÚÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿\n");
     fprintf(current_std,"³ No. ³ Name                           ³ QPer ³                              ³\n");
     fprintf(current_std,"ÃÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´\n");
 
     for (i=0; i < szd_count; i++)
     {
+        unsigned long j, k;
 
         if (i >= main_config->by_qpercent) break;
 
@@ -922,7 +935,7 @@ int print_statistics_by_qpercent()
         for (j=0; j<32; j++) name[j] = '\0';
         strncpy(name,size_data[i].name,30);
 
-        fprintf(current_std,"³%4ld.³ %-31s³%6.2lf³%-30s³\n",i+1,name,size_data[i].qpercent,diag);
+        fprintf(current_std,"³%4lu.³ %-31s³%6.2lf³%-30s³\n",i+1,name,size_data[i].qpercent,diag);
 
     } /* for */
 
@@ -933,19 +946,20 @@ int print_statistics_by_qpercent()
 
 int print_statistics_by_subj()
 {
-    unsigned long i,j,l;
+    unsigned long i;
     char name[60];
 
     qsort (subj_data, sd_count, sizeof(s_named_item), ftc_comparer);
     do_sort_gap(sd_count,subj_data);
 
-    fprintf(current_std,"\n --- Sorted by Subj. Top %ld\n",main_config->by_subj);
+    fprintf(current_std,"\n --- Sorted by Subj. Top %lu\n",main_config->by_subj);
     fprintf(current_std,"ÚÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄ¿\n");
     fprintf(current_std,"³ No. ³ Subj                                                    ³ Msgs ³\n");
     fprintf(current_std,"ÃÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄ´\n");
 
     for (i=0; i < sd_count; i++)
     {
+        unsigned long j, l;
 
         if (i >= main_config->by_subj) break;
 
@@ -954,7 +968,7 @@ int print_statistics_by_subj()
         for (j = 0; j < 56; j++) name[j] = '\0';
         for (j = 0; j < 55 && j < l; j++) name[j] = subj_data[i].name[j];
 
-        fprintf(current_std,"³%4ld.³ %-56s³%6ld³\n",i+1,name,subj_data[i].count);
+        fprintf(current_std,"³%4lu.³ %-56s³%6lu³\n",i+1,name,subj_data[i].count);
 
     } /* for */
 
@@ -965,7 +979,7 @@ int print_statistics_by_subj()
 
 int print_statistics_by_date()
 {
-    unsigned long i,j,k,maxcount;
+    unsigned long i, maxcount;
     char diag[80];
 
     fprintf(current_std,"\n --- Sorted by date\n\n");
@@ -976,12 +990,21 @@ int print_statistics_by_date()
 
     for (i = 0; i < dd_count; i++)
     {
+        unsigned long k;
+
         strcpy(diag,"\0");
         k = (unsigned long)((date_data[i].count/(float)(maxcount))*59);
-        if (k <= 0) strcpy(diag,"Ú"); else
-            for (j = 0;j < k ;j++) strcat(diag,"Ü");
+        if (k == 0)
+            strcpy(diag,"Ú");
+        else
+        {
+            unsigned long j;
 
-        fprintf(current_std," %02d-%02d-%04d %4ld ³%-59s\n",date_data[i].tm_date.tm_mday,
+            for (j = 0; j < k; j++)
+                strcat(diag,"Ü");
+        }
+
+        fprintf(current_std," %02d-%02d-%04d %4lu ³%-59s\n",date_data[i].tm_date.tm_mday,
                 date_data[i].tm_date.tm_mon,date_data[i].tm_date.tm_year+1900,date_data[i].count,diag);
 
     } /* for */
@@ -993,7 +1016,7 @@ int print_statistics_by_date()
 
 int print_statistics_by_wdays()
 {
-    unsigned long i,j,k,maxcount;
+    unsigned long i, maxcount;
     unsigned long counts[7] = {0,0,0,0,0,0,0};
     char diag[80];
 
@@ -1018,11 +1041,13 @@ int print_statistics_by_wdays()
 
     for (i = 0; i <= 6; i++)
     {
+        unsigned long j, k;
+
         strcpy(diag,"\0");
         k = (unsigned long)((counts[i]/(float)(maxcount))*60);
         for (j = 0;j < k ;j++) strcat(diag,"Ü");
 
-        fprintf(current_std," %s %6ld³%-60s\n",weekday_ab[i],counts[i],diag);
+        fprintf(current_std," %s %6lu³%-60s\n",weekday_ab[i],counts[i],diag);
 
     }
 
@@ -1032,7 +1057,7 @@ int print_statistics_by_wdays()
 
 int print_statistics_by_time()
 {
-    unsigned long i,j,k,maxcount;
+    unsigned long i, j, maxcount;
     unsigned long counts[24] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     char diag[80], str1[] = "ú  ", str2[] = "   ";
 
@@ -1074,15 +1099,15 @@ int print_statistics_by_time()
 
     for (j = 20; j > 0; j--)
     {
-
         strcpy(diag,"\0");
 
         for (i = 0; i <= 23; i++)
         {
+            unsigned long k;
+
             k = (unsigned long)((counts[i]/(float)(maxcount))*20);
 
             if (k >= j) strcat(diag,"ŞÛ "); else
-
                 if ((j % 5) == 0) strcat (diag,str1); else  strcat (diag,str2);
 
         }
@@ -1103,7 +1128,7 @@ int print_statistics_by_time()
 
 void print_err(char *s, unsigned long i)
 {
-    printf("Error in config (line %ld): \"%s\"\n\n",i,s);
+    printf("Error in config (line %lu): \"%s\"\n\n",i,s);
     exit(2);
 }
 
@@ -1677,7 +1702,7 @@ int write_msg_hdr(int n)
 
     }
 
-    sprintf(mh.DateTime,"%02d %s %s  %02d:%02d:%02d",t.tm_mday,
+    sprintf(mh.DateTime,"%02d %s %s  %02d:%02d:%02u",t.tm_mday,
             months_ab[t.tm_mon],yr,t.tm_hour,t.tm_min,isecs);
 
     isecs++;
