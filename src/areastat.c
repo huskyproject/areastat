@@ -357,7 +357,7 @@ int reading_base(unsigned long ii)
     {
         if ((msgn % 5)==0)
         {
-            fprintf(stderr,"Scanning msg: %ld\r",msgn);
+            fprintf(stderr,"Scanning msg: %lu\r",msgn);
             fflush(stdout);
         }
         if ((in_msg=MsgOpenMsg(in_area,MOPEN_READ,msgn))==NULL) continue;
@@ -677,7 +677,7 @@ int print_statistics_by_name()
 
     for (i=0; i<gd_count; i++)
     {
-        fprintf(current_std,"³%4lu.³ %-41s³%6lu³%6lu³%7lu³\n",i+1,global_data[i].name,u
+        fprintf(current_std,"³%4lu.³ %-41s³%6lu³%6lu³%7lu³\n",i+1,global_data[i].name,
                 global_data[i].from,global_data[i].to,global_data[i].from+global_data[i].to);
         tot_from += global_data[i].from;
         tot_to += global_data[i].to;
@@ -897,7 +897,7 @@ int print_statistics_by_size()
         for (j=0; j<32; j++) name[j] = '\0';
         strncpy(name,size_data[i].name,24);
 
-        fprintf(current_std,"³%4lu.³ %-25s³%7lu³%7ld³%-27s³\n",i+1,name,size_data[i].size,size_data[i].qsize,diag);
+        fprintf(current_std,"³%4lu.³ %-25s³%7lu³%7lu³%-27s³\n",i+1,name,size_data[i].size,size_data[i].qsize,diag);
 
     } /* for */
 
