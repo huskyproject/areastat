@@ -594,7 +594,7 @@ int reading_base(unsigned long ii)
                 {
                     from_to_data[i].count++;
                     nf = 1;
-                    free(dummy);
+                    nfree(dummy);
                 }
             }
 
@@ -623,7 +623,7 @@ int free_all()
 
     for (i = 0; i<gd_count; i++)
     {
-        free(global_data[i].name);
+        nfree(global_data[i].name);
     }
 
     if (global_data) free (global_data);
@@ -1530,7 +1530,7 @@ s_config *read_cfg(char *cfg_name)
 
     fclose(fcfg);
 
-    free(buff);
+    nfree(buff);
 
     return config;
 
