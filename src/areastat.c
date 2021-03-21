@@ -367,9 +367,9 @@ int reading_base(unsigned long ii)
         for (offset=0L; offset < textlen;)
         {
             if ((textlen-offset) >= BUFSIZE)
-                got = MsgReadMsg(in_msg, NULL, offset, BUFSIZE, buffer, 0L, NULL);
+                got = MsgReadMsg(in_msg, NULL, offset, BUFSIZE, (byte *)buffer, 0L, NULL);
             else
-                got = MsgReadMsg(in_msg, NULL, offset, textlen-offset, buffer, 0L, NULL);
+                got = MsgReadMsg(in_msg, NULL, offset, textlen-offset, (byte *)buffer, 0L, NULL);
 
             if (got == 0)
                 break; /* we read 0 bytes - the end of message */
@@ -410,12 +410,12 @@ int reading_base(unsigned long ii)
         nf = 0; nt = 0;
         for (i=0; i<gd_count; i++)
         {
-            if (stricmp(global_data[i].name,msg.from) == 0)
+            if (stricmp(global_data[i].name, (char *)msg.from) == 0)
             {
                 global_data[i].from++;
                 nf = 1;
             }
-            if (stricmp(global_data[i].name,msg.to) == 0)
+            if (stricmp(global_data[i].name, (char *)msg.to) == 0)
             {
                 global_data[i].to++;
                 nt = 1;
@@ -426,8 +426,8 @@ int reading_base(unsigned long ii)
         {
             gd_count++;
             global_data = srealloc (global_data, gd_count * sizeof(s_unsorted_item));
-            global_data[gd_count-1].name = smalloc(strlen(msg.from)+1);
-            strcpy (global_data[gd_count-1].name,msg.from);
+            global_data[gd_count-1].name = smalloc(strlen((char *)msg.from)+1);
+            strcpy (global_data[gd_count-1].name,(char *)msg.from);
             global_data[gd_count-1].from = 1;
             global_data[gd_count-1].to = 0;
         }
@@ -437,8 +437,8 @@ int reading_base(unsigned long ii)
         {
             gd_count++;
             global_data = srealloc (global_data, gd_count * sizeof(s_unsorted_item));
-            global_data[gd_count-1].name = smalloc(strlen(msg.to)+1);
-            strcpy (global_data[gd_count-1].name,msg.to);
+            global_data[gd_count-1].name = smalloc(strlen((char *)msg.to)+1);
+            strcpy (global_data[gd_count-1].name,(char *)msg.to);
             global_data[gd_count-1].from = 0;
             global_data[gd_count-1].to = 1;
         }
@@ -448,7 +448,7 @@ int reading_base(unsigned long ii)
             nf = 0;
             for (i = 0; i < fd_count; i++)
             {
-                if (!stricmp(from_data[i].name,msg.from))
+                if (!stricmp(from_data[i].name, (char *)msg.from))
                 {
                     from_data[i].count++;
                     nf = 1;
@@ -459,8 +459,8 @@ int reading_base(unsigned long ii)
             {
                 fd_count++;
                 from_data = srealloc (from_data,fd_count * sizeof(s_named_item));
-                from_data[fd_count-1].name = (char *) smalloc(strlen(msg.from)+1);
-                strcpy (from_data[fd_count-1].name,msg.from);
+                from_data[fd_count-1].name = (char *) smalloc(strlen((char *)msg.from)+1);
+                strcpy (from_data[fd_count-1].name, (char *)msg.from);
                 from_data[fd_count-1].count = 1;
             }
         }
@@ -470,7 +470,7 @@ int reading_base(unsigned long ii)
             nf = 0;
             for (i = 0; i < td_count; i++)
             {
-                if (!stricmp(to_data[i].name,msg.to))
+                if (!stricmp(to_data[i].name, (char *)msg.to))
                 {
                     to_data[i].count++;
                     nf = 1;
@@ -481,8 +481,8 @@ int reading_base(unsigned long ii)
             {
                 td_count++;
                 to_data = srealloc (to_data, td_count * sizeof(s_named_item));
-                to_data[td_count-1].name = (char *) smalloc(strlen(msg.to)+1);
-                strcpy (to_data[td_count-1].name,msg.to);
+                to_data[td_count-1].name = (char *)smalloc(strlen((char *)msg.to)+1);
+                strcpy (to_data[td_count-1].name, (char *)msg.to);
                 to_data[td_count-1].count = 1;
             }
         }
@@ -492,7 +492,7 @@ int reading_base(unsigned long ii)
             nf = 0;
             for (i = 0; i < sd_count; i++)
             {
-                if (!stricmp(subj_data[i].name,msg.subj))
+                if (!stricmp(subj_data[i].name, (char *)msg.subj))
                 {
                     subj_data[i].count++;
                     nf = 1;
@@ -503,8 +503,8 @@ int reading_base(unsigned long ii)
             {
                 sd_count++;
                 subj_data = srealloc (subj_data, sd_count * sizeof(s_named_item));
-                subj_data[sd_count-1].name = (char *) smalloc(strlen(msg.subj)+1);
-                strcpy (subj_data[sd_count-1].name,msg.subj);
+                subj_data[sd_count-1].name = (char *)smalloc(strlen((char *)msg.subj)+1);
+                strcpy (subj_data[sd_count-1].name, (char *)msg.subj);
                 subj_data[sd_count-1].count = 1;
             }
         }
@@ -559,7 +559,7 @@ int reading_base(unsigned long ii)
             nf = 0;
             for (i = 0; i < szd_count; i++)
             {
-                if (!stricmp(size_data[i].name,msg.from))
+                if (!stricmp(size_data[i].name, (char *)msg.from))
                 {
                     size_data[i].size += offset;
                     size_data[i].qsize += qsize;
@@ -571,8 +571,8 @@ int reading_base(unsigned long ii)
             {
                 szd_count++;
                 size_data = srealloc (size_data, szd_count * sizeof(s_size_item));
-                size_data[szd_count-1].name = (char *) smalloc(strlen(msg.from)+1);
-                strcpy (size_data[szd_count-1].name,msg.from);
+                size_data[szd_count-1].name = (char *)smalloc(strlen((char *)msg.from)+1);
+                strcpy (size_data[szd_count-1].name, (char *)msg.from);
                 size_data[szd_count-1].size = offset;
                 size_data[szd_count-1].qsize = qsize;
             }
@@ -583,10 +583,10 @@ int reading_base(unsigned long ii)
         {
 
             nf = 0;
-            dummy = (char *) smalloc (strlen(msg.from)+strlen(msg.to)+2);
-            strcpy (dummy,msg.from);
+            dummy = (char *)smalloc(strlen((char *)msg.from)+strlen((char *)msg.to)+2);
+            strcpy (dummy, (char *)msg.from);
             strcat (dummy,"");
-            strcat (dummy,msg.to);
+            strcat (dummy, (char *)msg.to);
             for (i = 0; i < ftd_count; i++)
             {
                 if (!stricmp(from_to_data[i].name,dummy))
@@ -1685,7 +1685,7 @@ int write_msg_hdr(int n)
     mh.AttributeWord = 0;
     mh.cost = 0;
 
-    sprintf(yy,"%04d",t.tm_year+1900);
+    sprintf(yy,"%04hd",t.tm_year+1900);
 
     if (strlen(yy) == 4)
     {
@@ -1701,7 +1701,7 @@ int write_msg_hdr(int n)
 
     }
 
-    sprintf(mh.DateTime,"%02d %s %s  %02d:%02d:%02u",t.tm_mday,
+    sprintf((char *)mh.DateTime,"%02d %s %s  %02d:%02d:%02u",t.tm_mday,
             months_ab[t.tm_mon],yr,t.tm_hour,t.tm_min,isecs);
 
     isecs++;
