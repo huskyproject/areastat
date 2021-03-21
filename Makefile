@@ -24,9 +24,9 @@ ifneq ($(DYNLIBS), 1)
 endif
 
 ifeq ($(SHORTNAME), 1)
-  LIBS  = -L$(LIBDIR) -lfidoconf -lsmapi
+  LIBS  = -L$(LIBDIR) -lhusky -lfidoconf -lsmapi
 else
-  LIBS  = -L$(LIBDIR) -lfidoconfig -lsmapi
+  LIBS  = -L$(LIBDIR) -lhusky -lfidoconfig -lsmapi
 endif
 
 CDEFS=-D$(OSTYPE) -DUNAME=\"$(UNAME)\" $(ADDCDEFS)
