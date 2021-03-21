@@ -26,7 +26,6 @@
 #include "version.h"
 
 #define BUFSIZE 4096
-#define nfree(a) { if (a != NULL) { free(a); a = NULL; } }
 #define ISDIGIT(ch) ((ch) >= '0' && (ch) <= '9')
 #define ISLWSP(ch) ((ch) == ' ' || (ch) == '\t')
 
