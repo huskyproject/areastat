@@ -356,7 +356,7 @@ int reading_base(unsigned long ii)
     {
         if ((msgn % 5)==0)
         {
-            fprintf(stderr,"Scanning msg: %lu\r",msgn);
+            fprintf(stderr,"Scanning msg: %u\r",msgn);
             fflush(stdout);
         }
         if ((in_msg=MsgOpenMsg(in_area,MOPEN_READ,msgn))==NULL) continue;
