@@ -46,7 +46,6 @@ else ()
 endif (MSVC)
 
 find_library(husky_LIB NAMES husky PATHS "${CMAKE_FIND_ROOT_PATH}")
-find_library(fidoconfig_LIB NAMES fidoconfig PATHS "${CMAKE_FIND_ROOT_PATH}")
 find_library(smapi_LIB NAMES smapi PATHS "${CMAKE_FIND_ROOT_PATH}")
 
 message("-------------------------")
@@ -54,7 +53,6 @@ message("System            : ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_VERSION}")
 message("Compiler          : ${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION}")
 message("Prefix            : ${CMAKE_INSTALL_PREFIX} (run \"cmake . -DCMAKE_INSTALL_PREFIX:PATH=/other\" for other prefix)")
 message("libhusky          : ${husky_LIB}")
-message("libfidoconfig     : ${fidoconfig_LIB}")
 message("libsmapi          : ${smapi_LIB}")
 message("Build shared      : ${BUILD_SHARED_LIBS}")
 message("Build type        : ${CMAKE_CONFIGURATION_TYPES}")
@@ -63,7 +61,7 @@ message("-------------------------")
 ADD_EXECUTABLE(areastat
   src/areastat.c
 )
-target_link_libraries(areastat ${fidoconfig_LIB} ${smapi_LIB} ${husky_LIB})
+target_link_libraries(areastat ${smapi_LIB} ${husky_LIB})
 
   INSTALL(TARGETS areastat
     RUNTIME DESTINATION bin
