@@ -2507,7 +2507,7 @@ int write_msg_hdr(int n)
         print_write_err();
     }
 
-#    fwrite("\r\x01" "FLAGS NPD\r", 12, 1, out_pkt);
+    fwrite("\r\x01" "FLAGS NPD\r", 12, 1, out_pkt);
 
     if(ferror(out_pkt))
     {
