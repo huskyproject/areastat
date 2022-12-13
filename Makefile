@@ -2,7 +2,7 @@
 #
 # This file is part of areastat, part of the Husky fidonet software project
 # Use with GNU version of make v.3.82 or later
-# Requires: husky enviroment
+# Requires: husky environment
 #
 
 areastat_LIBS := $(smapi_TARGET_BLD) $(huskylib_TARGET_BLD)
@@ -93,9 +93,6 @@ else
 
     $(areastat_MAN5DST): $(areastat_MAN5BLD) | $(DESTDIR)$(MAN5DIR)
 	$(INSTALL) $(IMOPT) $< $(DESTDIR)$(MAN5DIR); $(TOUCH) "$@"
-
-$(DESTDIR)$(MAN5DIR): | $(DESTDIR)$(MANDIR)
-	[ -d $@ ] || $(MKDIR) $(MKDIROPT) $@
 endif
 
 
