@@ -6,10 +6,10 @@
 #include "cvsdate.h"
 
 /* basic version number */
-#define VER_MAJOR 1
-#define VER_MINOR 9
-#define VER_PATCH 0
-#define VER_BRANCH BRANCH_CURRENT
+#define areastat_VER_MAJOR  1
+#define areastat_VER_MINOR  9
+#define areastat_VER_PATCH  0
+#define areastat_VER_BRANCH BRANCH_CURRENT
 
 extern char      *versionStr;
 

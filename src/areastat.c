@@ -2629,7 +2629,8 @@ int main(int argc, char * argv[])
     global_msgid  = time(NULL);
     global_msgid %= 0xffffffff;
     versionStr    =
-        GenVersionStr("areastat", VER_MAJOR, VER_MINOR, VER_PATCH, VER_BRANCH, cvs_date);
+        GenVersionStr("areastat", areastat_VER_MAJOR, areastat_VER_MINOR,
+                      areastat_VER_PATCH, areastat_VER_BRANCH, cvs_date);
     printf("%s\n", versionStr);
 
     if(argc > 2)
