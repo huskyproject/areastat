@@ -2393,7 +2393,7 @@ int write_msg_hdr(int n)
     mh.destNet       = main_config->pkt_dest_addr.net;
     mh.AttributeWord = 0;
     mh.cost          = 0;
-    sprintf(yy, "%04hd", t.tm_year + 1900);
+    sprintf(yy, "%04d", t.tm_year + 1900);
 
     if(strlen(yy) == 4)
     {
