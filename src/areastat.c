@@ -1647,11 +1647,6 @@ s_config * read_cfg(char * cfg_name)
     {
         i++;
 
-        if(line == NULL)
-        {
-            continue;
-        }
-
         j = strlen(line) - 1;
 
         while(j && (line[j] == '\r' || line[j] == '\n'))
