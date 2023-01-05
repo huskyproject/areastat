@@ -2787,7 +2787,7 @@ int main(int argc, char * argv[])
 
         while(fgets(ibuff, 255, current_std))
         {
-            if(ibuff != NULL && *ibuff)
+            if(*ibuff)
             {
                 if(ibuff[0] == ' ' && ibuff[1] == '-' && ibuff[2] == '-' && ibuff[3] == '-' &&
                    msg_size > main_config->pkt_size)
