@@ -2785,7 +2785,7 @@ int main(int argc, char * argv[])
 
         msg_size = 0;
 
-        while(fgets(ibuff, 255, current_std))
+        while(fgets(ibuff, sizeof ibuf, current_std))
         {
             if(*ibuff)
             {
