@@ -16,13 +16,13 @@ areastat_TARGET_DST = $(BINDIR_DST)$(areastat_TARGET)
 
 ifdef MAN1DIR
     areastat_MAN1PAGES := areastat.1
-    areastat_MAN1BLD := $(areastat_BUILDDIR)$(areastat_MAN1PAGES).gz
-    areastat_MAN1DST := $(DESTDIR)$(MAN1DIR)$(DIRSEP)$(areastat_MAN1PAGES).gz
+    areastat_MAN1BLD := $(areastat_BUILDDIR)$(areastat_MAN1PAGES)$(_COMPR)
+    areastat_MAN1DST := $(DESTDIR)$(MAN1DIR)$(DIRSEP)$(areastat_MAN1PAGES)$(_COMPR)
 endif
 ifdef MAN5DIR
     areastat_MAN5PAGES := areastat.conf.5
-    areastat_MAN5BLD := $(areastat_BUILDDIR)$(areastat_MAN5PAGES).gz
-    areastat_MAN5DST := $(DESTDIR)$(MAN5DIR)$(DIRSEP)$(areastat_MAN5PAGES).gz
+    areastat_MAN5BLD := $(areastat_BUILDDIR)$(areastat_MAN5PAGES)$(_COMPR)
+    areastat_MAN5DST := $(DESTDIR)$(MAN5DIR)$(DIRSEP)$(areastat_MAN5PAGES)$(_COMPR)
 endif
 
 .PHONY: areastat_build areastat_install areastat_uninstall areastat_clean \
@@ -55,13 +55,21 @@ $(areastat_OBJDIR): | do_not_run_make_as_root $(areastat_BUILDDIR)
 # Build man pages
 ifdef MAN1DIR
     $(areastat_MAN1BLD): $(areastat_MANDIR)$(areastat_MAN1PAGES) | do_not_run_make_as_root
-	gzip -c $< > $@
+    ifdef COMPRESS
+		$(COMPRESS) -c $< > $@
+    else
+		$(CP) $(CPOPT) $< $@
+    endif
 else
     $(areastat_MAN1BLD): ;
 endif
 ifdef MAN5DIR
     $(areastat_MAN5BLD): $(areastat_MANDIR)$(areastat_MAN5PAGES) | $(areastat_BUILDDIR) do_not_run_make_as_root
-	gzip -c $< > $@
+    ifdef COMPRESS
+		$(COMPRESS) -c $< > $@
+    else
+		$(CP) $(CPOPT) $< $@
+    endif
 else
     $(areastat_MAN5BLD): ;
 endif
